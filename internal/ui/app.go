@@ -65,7 +65,13 @@ func NewMainApp(cfg *config.Config, hist *history.Manager) *MainApp {
 	w.Resize(fyne.NewSize(750, 600))
 	w.CenterOnScreen()
 
+	// Intercept window close: hide to system tray instead of exiting
+	w.SetCloseIntercept(func() {
+		w.Hide()
+	})
+
 	mApp.ApplyTheme()
+	mApp.SetupSystemTray()
 
 	return mApp
 }
@@ -87,17 +93,12 @@ func (m *MainApp) ApplyTheme() {
 }
 
 // HandleIncomingMagnet processes a magnet link received from macOS or CLI.
+// When the app is already running, the window is NOT shown or focused;
+// the link is dispatched silently in the background with a desktop notification.
 func (m *MainApp) HandleIncomingMagnet(magnetURI string) {
-	m.Window.RequestFocus()
 	m.DispatchTab.SetMagnet(magnetURI)
-
-	// If AutoSend is enabled in user settings, immediately trigger dispatch
-	if m.Config.AutoSend {
-		m.DispatchTab.TriggerSend()
-	} else {
-		// Switch to Dispatch tab so user can review and click Send
-		m.Tabs.SelectIndex(0)
-	}
+	// Silently trigger background dispatch without showing or focusing window
+	m.DispatchTab.TriggerSend()
 }
 
 // SendMagnet dispatches the magnet link to the chosen profile.

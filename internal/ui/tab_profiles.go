@@ -125,6 +125,7 @@ func (p *ProfilesTab) Build() fyne.CanvasObject {
 		p.app.Config.ActiveProfileID = p.currentID
 		_ = p.app.Config.Save()
 		p.app.DispatchTab.RefreshProfiles()
+		p.app.UpdateTrayMenu()
 		dialog.ShowInformation("Profile Activated", fmt.Sprintf("'%s' is now the active client profile.", p.nameEntry.Text), p.app.Window)
 	})
 
@@ -335,6 +336,7 @@ func (p *ProfilesTab) saveCurrentProfile() {
 
 	p.app.DispatchTab.RefreshProfiles()
 	p.refreshProfileOptions()
+	p.app.UpdateTrayMenu()
 	dialog.ShowInformation("Saved", fmt.Sprintf("Profile '%s' saved successfully.", updated.Name), p.app.Window)
 }
 
@@ -352,6 +354,7 @@ func (p *ProfilesTab) deleteCurrentProfile() {
 		_ = p.app.Config.Save()
 		p.app.DispatchTab.RefreshProfiles()
 		p.refreshProfileOptions()
+		p.app.UpdateTrayMenu()
 	}, p.app.Window)
 }
 

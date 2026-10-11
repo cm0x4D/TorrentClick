@@ -86,6 +86,7 @@ func (d *DispatchTab) Build() fyne.CanvasObject {
 		if id, ok := d.profileMapping[selectedName]; ok {
 			d.app.Config.ActiveProfileID = id
 			_ = d.app.Config.Save()
+			d.app.UpdateTrayMenu()
 		}
 	})
 	d.RefreshProfiles()

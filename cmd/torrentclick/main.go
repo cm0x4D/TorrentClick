@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"os"
+	"strings"
 
 	"fyne.io/fyne/v2"
 
@@ -51,5 +52,19 @@ func main() {
 		}
 	}()
 
-	appUI.Window.ShowAndRun()
+	// 6. Check if started with magnet link; if so, run silently in background tray
+	startedWithMagnet := false
+	for _, arg := range os.Args[1:] {
+		if strings.HasPrefix(strings.ToLower(strings.TrimSpace(arg)), "magnet:") {
+			startedWithMagnet = true
+			break
+		}
+	}
+
+	if startedWithMagnet {
+		appUI.Window.Hide()
+		appUI.FyneApp.Run()
+	} else {
+		appUI.Window.ShowAndRun()
+	}
 }
