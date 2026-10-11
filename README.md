@@ -1,9 +1,15 @@
-# TorrentClick 🧲⚡
+# TorrentClick
 
-A modern macOS desktop application written in **Go** and **Fyne** that registers as the system URL handler for torrent `magnet:` links. When a magnet link is clicked anywhere on macOS (Safari, Chrome, Firefox, Slack, etc.) or pasted manually, TorrentClick intercepts it and dispatches a configurable REST API call using **Go text/template** and authentication to your remote or local torrent client.
+A macOS desktop application written in **Go** and **Fyne** that registers as the system URL handler for torrent `magnet:` links. When a magnet link is clicked anywhere on 
+macOS (Safari, Chrome, Firefox, Slack, etc.) or pasted manually, TorrentClick intercepts it and dispatches a configurable REST API call using **Go text/template** and 
+authentication to your remote or local torrent client.
 
 > [!WARNING]
-> **Disclaimer**: This entire project was basically my test to try out vibecoding without even having a detailed look at the code. I had the exact requirement to automatically start downloads when clicking magnet links on a website, so I combined the necessary with the useful. It has only been tested to work with Synology DSM.
+> **Disclaimer**: This entire project was basically my test to try out vibecoding without even having a detailed look at the code. I had the exact requirement to automatically 
+start downloads when clicking magnet links on a website, so I combined the necessary with the useful. It has only been tested to work with Synology DSM.
+>
+> I might improve it by hand in the future—especially the UI, which is ugly and not well integrated into the macOS desktop—yet it serves my needs for now. Pull requests are 
+appreciated should anyone fix a template or a bug in the application itself!
 
 ---
 
@@ -26,7 +32,8 @@ A modern macOS desktop application written in **Go** and **Fyne** that registers
   - Template variables: `{{.Magnet}}`, `{{.MagnetEscaped}}`, `{{.InfoHash}}`, `{{.DisplayName}}`, `{{.SessionID}}`, `{{.Trackers}}`, `{{index .Config "param"}}`.
   - Template helper functions: `urlquery`, `json`, `trim`, `lower`, `upper`, `default`.
 - **Pre-configured Client Presets**:
-  - **Synology Download Station**: Automated DSM WebAPI authentication (`SYNO.API.Auth` login with `_sid` session token retrieval and error code 105 auto-relogin) + `SYNO.DownloadStation.Task` create task call.
+  - **Synology Download Station**: Automated DSM WebAPI authentication (`SYNO.API.Auth` login with `_sid` session token retrieval and error code 105 auto-relogin) + 
+    `SYNO.DownloadStation.Task` create task call.
   - **qBittorrent**: Web API (`/api/v2/auth/login` session cookie + `/api/v2/torrents/add`).
   - **Transmission**: JSON-RPC over HTTP (`/transmission/rpc`) with automatic `409 Conflict` `X-Transmission-Session-Id` handshake and Basic Auth.
   - **Deluge**: Web UI JSON-RPC (`/json`).
