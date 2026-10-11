@@ -10,6 +10,14 @@ A modern macOS desktop application written in **Go** and **Fyne** that registers
   - Registers `CFBundleURLTypes` for `magnet:` links in macOS `Info.plist`.
   - Handles **cold boots** (app opened via `os.Args` when clicking a magnet link).
   - Handles **warm starts** (app already running, receives macOS Cocoa Apple Events `kInternetEventClass` / `kAEGetURL` via a lightweight Cgo bridge).
+- **macOS System Tray / Menu Bar Icon**:
+  - Resides in the macOS menu bar status item tray with a custom template icon.
+  - Tray menu provides options to Show Window, inspect Active Client, switch target clients directly, open Preferences, and Quit.
+  - Closing the main window (red close button) hides to the tray instead of terminating the process.
+- **Silent Background Interception**:
+  - When the application is already running, clicking any `magnet:` link processes and dispatches it **completely silently in the background**.
+  - The window **never pops up or steals focus**.
+  - A native macOS desktop notification confirms when the torrent is queued or reports errors.
 - **Configurable REST API Dispatch Engine with Go Templates**:
   - Dynamic request URLs, endpoints, headers, query parameters, and request bodies.
   - Template variables: `{{.Magnet}}`, `{{.MagnetEscaped}}`, `{{.InfoHash}}`, `{{.DisplayName}}`, `{{.SessionID}}`, `{{.Trackers}}`, `{{index .Config "param"}}`.
