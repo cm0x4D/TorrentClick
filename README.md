@@ -20,6 +20,10 @@ A modern macOS desktop application written in **Go** and **Fyne** that registers
   - **Transmission**: JSON-RPC over HTTP (`/transmission/rpc`) with automatic `409 Conflict` `X-Transmission-Session-Id` handshake and Basic Auth.
   - **Deluge**: Web UI JSON-RPC (`/json`).
   - **Generic Webhook**: Custom JSON POST endpoint with Bearer Token or custom headers.
+- **Desktop Theme Synchronization**:
+  - Automatically matches macOS Dark Mode / Light Mode at startup.
+  - Listens to native `AppleInterfaceThemeChangedNotification` events in real time to switch themes dynamically when macOS appearance changes.
+  - Configurable in the Settings tab (`Match macOS System (Auto)`, `Dark Mode`, `Light Mode`).
 - **Modern Fyne UI**:
   - **Dispatch Tab**: Live parsing of magnet links (name, info hash, trackers count), destination profile picker, one-click send, response status and inspection modal.
   - **Profiles Tab**: Visual profile editor and preset loader, test connection button.
