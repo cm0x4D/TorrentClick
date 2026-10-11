@@ -44,6 +44,32 @@ func (s *SettingsTab) Build() fyne.CanvasObject {
 	})
 	s.hideAfter.SetChecked(s.app.Config.HideWindowAfterSend)
 
+	themeSelect := widget.NewSelect([]string{
+		"Match macOS System (Auto)",
+		"Dark Mode",
+		"Light Mode",
+	}, func(val string) {
+		switch val {
+		case "Dark Mode":
+			s.app.Config.ThemeMode = "dark"
+		case "Light Mode":
+			s.app.Config.ThemeMode = "light"
+		default:
+			s.app.Config.ThemeMode = "auto"
+		}
+		s.app.ApplyTheme()
+		_ = s.app.Config.Save()
+	})
+
+	switch s.app.Config.ThemeMode {
+	case "dark":
+		themeSelect.SetSelected("Dark Mode")
+	case "light":
+		themeSelect.SetSelected("Light Mode")
+	default:
+		themeSelect.SetSelected("Match macOS System (Auto)")
+	}
+
 	saveBtn := widget.NewButtonWithIcon("Save Preferences", theme.DocumentSaveIcon(), func() {
 		if err := s.app.Config.Save(); err != nil {
 			dialog.ShowError(err, s.app.Window)
@@ -53,7 +79,10 @@ func (s *SettingsTab) Build() fyne.CanvasObject {
 	})
 	saveBtn.Importance = widget.HighImportance
 
-	prefCard := widget.NewCard("Behavior & Workflow", "", container.NewVBox(
+	prefCard := widget.NewCard("Appearance & Behavior", "", container.NewVBox(
+		widget.NewLabel("Desktop Appearance Theme:"),
+		themeSelect,
+		widget.NewSeparator(),
 		s.autoSend,
 		s.notify,
 		s.hideAfter,

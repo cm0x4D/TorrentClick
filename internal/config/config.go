@@ -49,6 +49,7 @@ type Config struct {
 	AutoSend             bool      `json:"auto_send"`
 	NotificationsEnabled bool      `json:"notifications_enabled"`
 	HideWindowAfterSend  bool      `json:"hide_window_after_send"`
+	ThemeMode            string    `json:"theme_mode"` // "auto", "dark", "light"
 	Profiles             []Profile `json:"profiles"`
 	mu                   sync.RWMutex
 }
@@ -148,6 +149,7 @@ func NewDefault() *Config {
 		AutoSend:             false,
 		NotificationsEnabled: true,
 		HideWindowAfterSend:  false,
+		ThemeMode:            "auto",
 		Profiles:             profiles,
 	}
 }

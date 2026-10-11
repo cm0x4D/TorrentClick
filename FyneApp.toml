@@ -5,4 +5,4 @@ Icon = "assets/icon.png"
 Name = "TorrentClick"
 ID = "com.torrentclick.app"
 Version = "1.0.0"
-Build = 5
+Build = 6

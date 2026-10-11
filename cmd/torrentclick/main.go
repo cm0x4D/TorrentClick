@@ -8,6 +8,7 @@ import (
 
 	"torrentclick/internal/config"
 	"torrentclick/internal/history"
+	"torrentclick/internal/sysdark"
 	"torrentclick/internal/ui"
 	"torrentclick/internal/urlhandler"
 )
@@ -35,6 +36,17 @@ func main() {
 			log.Printf("Received magnet URL: %s", magnetURL)
 			fyne.Do(func() {
 				appUI.HandleIncomingMagnet(magnetURL)
+			})
+		}
+	}()
+
+	// 5. Background listener for macOS appearance changes (Dark/Light mode toggles)
+	themeChan := sysdark.StartWatcher()
+	go func() {
+		for isDark := range themeChan {
+			log.Printf("macOS appearance changed: DarkMode=%v", isDark)
+			fyne.Do(func() {
+				appUI.ApplyTheme()
 			})
 		}
 	}()

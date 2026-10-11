@@ -19,6 +19,7 @@ import (
 	"torrentclick/internal/config"
 	"torrentclick/internal/history"
 	"torrentclick/internal/magnet"
+	"torrentclick/internal/sysdark"
 )
 
 // MainApp wraps the Fyne GUI application state.
@@ -64,7 +65,25 @@ func NewMainApp(cfg *config.Config, hist *history.Manager) *MainApp {
 	w.Resize(fyne.NewSize(750, 600))
 	w.CenterOnScreen()
 
+	mApp.ApplyTheme()
+
 	return mApp
+}
+
+// ApplyTheme synchronizes Fyne theme with macOS appearance and preferences.
+func (m *MainApp) ApplyTheme() {
+	switch m.Config.ThemeMode {
+	case "dark":
+		m.FyneApp.Settings().SetTheme(theme.DarkTheme())
+	case "light":
+		m.FyneApp.Settings().SetTheme(theme.LightTheme())
+	default: // "auto"
+		if sysdark.IsDarkMode() {
+			m.FyneApp.Settings().SetTheme(theme.DarkTheme())
+		} else {
+			m.FyneApp.Settings().SetTheme(theme.LightTheme())
+		}
+	}
 }
 
 // HandleIncomingMagnet processes a magnet link received from macOS or CLI.
