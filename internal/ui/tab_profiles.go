@@ -12,34 +12,37 @@ import (
 	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
 
+	"torrentclick/internal/client"
 	"torrentclick/internal/config"
 	"torrentclick/internal/magnet"
 )
 
 // ProfilesTab manages configuring and editing client REST templates.
 type ProfilesTab struct {
-	app           *MainApp
-	profileSelect *widget.Select
-	currentID     string
+	app             *MainApp
+	profileSelect   *widget.Select
+	currentID       string
 
-	nameEntry     *widget.Entry
-	descEntry     *widget.Entry
-	urlEntry      *widget.Entry
-	endpointEntry *widget.Entry
-	methodSelect  *widget.Select
-	ctEntry       *widget.Entry
-	authSelect    *widget.Select
-	userEntry     *widget.Entry
-	passEntry     *widget.Entry
-	tokenEntry    *widget.Entry
-	hdrKeyEntry   *widget.Entry
-	hdrValEntry   *widget.Entry
-	bodyEntry     *widget.Entry
+	nameEntry       *widget.Entry
+	descEntry       *widget.Entry
+	urlEntry        *widget.Entry
+	endpointEntry   *widget.Entry
+	methodSelect    *widget.Select
+	ctEntry         *widget.Entry
+	authSelect      *widget.Select
+	userEntry       *widget.Entry
+	passEntry       *widget.Entry
+	tokenEntry      *widget.Entry
+	hdrKeyEntry     *widget.Entry
+	hdrValEntry     *widget.Entry
+	bodyEntry       *widget.Entry
+	totpSecretEntry *widget.Entry
+	deviceIDEntry   *widget.Entry
 
-	saveBtn       *widget.Button
-	testBtn       *widget.Button
-	deleteBtn     *widget.Button
-	makeActiveBtn *widget.Button
+	saveBtn         *widget.Button
+	testBtn         *widget.Button
+	deleteBtn       *widget.Button
+	makeActiveBtn   *widget.Button
 }
 
 // NewProfilesTab initializes the profiles editor tab.
@@ -61,6 +64,12 @@ func (p *ProfilesTab) Build() fyne.CanvasObject {
 	p.tokenEntry = widget.NewPasswordEntry()
 	p.hdrKeyEntry = widget.NewEntry()
 	p.hdrValEntry = widget.NewEntry()
+
+	p.totpSecretEntry = widget.NewPasswordEntry()
+	p.totpSecretEntry.SetPlaceHolder("Optional: 32-char Base32 TOTP secret for hands-free 2FA")
+
+	p.deviceIDEntry = widget.NewEntry()
+	p.deviceIDEntry.SetPlaceHolder("Auto-filled once 2FA OTP is verified on Synology")
 
 	p.methodSelect = widget.NewSelect([]string{"POST", "GET", "PUT", "PATCH"}, nil)
 	p.authSelect = widget.NewSelect([]string{
@@ -154,9 +163,11 @@ func (p *ProfilesTab) Build() fyne.CanvasObject {
 			widget.NewLabel("Authentication:"), p.authSelect,
 			widget.NewLabel("Username:"), p.userEntry,
 			widget.NewLabel("Password:"), p.passEntry,
-			widget.NewLabel("Token / Bearer:"), p.tokenEntry,
+			widget.NewLabel("Token / Bearer / SID:"), p.tokenEntry,
 			widget.NewLabel("Custom Header Key:"), p.hdrKeyEntry,
 			widget.NewLabel("Custom Header Value:"), p.hdrValEntry,
+			widget.NewLabel("2FA TOTP Secret Key:"), p.totpSecretEntry,
+			widget.NewLabel("Trusted Device ID:"), p.deviceIDEntry,
 		),
 		widget.NewLabelWithStyle("Request Body Template:", fyne.TextAlignLeading, fyne.TextStyle{Bold: true}),
 		container.NewGridWrap(fyne.NewSize(650, 100), p.bodyEntry),
@@ -172,36 +183,54 @@ func (p *ProfilesTab) Build() fyne.CanvasObject {
 func (p *ProfilesTab) updateAuthFieldVisibility(auth config.AuthType) {
 	// Enable/disable fields according to auth type
 	switch auth {
-	case config.AuthBasic, config.AuthSynologyLogin, config.AuthQBittorrentLogin:
+	case config.AuthSynologyLogin:
+		p.userEntry.Enable()
+		p.passEntry.Enable()
+		p.tokenEntry.Enable() // can be used for manual SID bypass
+		p.hdrKeyEntry.Disable()
+		p.hdrValEntry.Disable()
+		p.totpSecretEntry.Enable()
+		p.deviceIDEntry.Enable()
+	case config.AuthBasic, config.AuthQBittorrentLogin:
 		p.userEntry.Enable()
 		p.passEntry.Enable()
 		p.tokenEntry.Disable()
 		p.hdrKeyEntry.Disable()
 		p.hdrValEntry.Disable()
+		p.totpSecretEntry.Disable()
+		p.deviceIDEntry.Disable()
 	case config.AuthBearer:
 		p.userEntry.Disable()
 		p.passEntry.Disable()
 		p.tokenEntry.Enable()
 		p.hdrKeyEntry.Disable()
 		p.hdrValEntry.Disable()
+		p.totpSecretEntry.Disable()
+		p.deviceIDEntry.Disable()
 	case config.AuthHeader:
 		p.userEntry.Disable()
 		p.passEntry.Disable()
 		p.tokenEntry.Disable()
 		p.hdrKeyEntry.Enable()
 		p.hdrValEntry.Enable()
+		p.totpSecretEntry.Disable()
+		p.deviceIDEntry.Disable()
 	case config.AuthTransmissionSession:
 		p.userEntry.Enable()
 		p.passEntry.Enable()
 		p.tokenEntry.Disable()
 		p.hdrKeyEntry.Disable()
 		p.hdrValEntry.Disable()
+		p.totpSecretEntry.Disable()
+		p.deviceIDEntry.Disable()
 	default:
 		p.userEntry.Disable()
 		p.passEntry.Disable()
 		p.tokenEntry.Disable()
 		p.hdrKeyEntry.Disable()
 		p.hdrValEntry.Disable()
+		p.totpSecretEntry.Disable()
+		p.deviceIDEntry.Disable()
 	}
 }
 
@@ -237,6 +266,15 @@ func (p *ProfilesTab) loadProfileIntoForm(prof config.Profile) {
 	p.hdrKeyEntry.SetText(prof.HeaderKey)
 	p.hdrValEntry.SetText(prof.HeaderValue)
 	p.bodyEntry.SetText(prof.BodyTemplate)
+
+	if prof.CustomParams != nil {
+		p.totpSecretEntry.SetText(prof.CustomParams["totp_secret"])
+		p.deviceIDEntry.SetText(prof.CustomParams["device_id"])
+	} else {
+		p.totpSecretEntry.SetText("")
+		p.deviceIDEntry.SetText("")
+	}
+
 	p.updateAuthFieldVisibility(prof.AuthType)
 }
 
@@ -254,6 +292,26 @@ func (p *ProfilesTab) saveCurrentProfile() {
 		p.currentID = fmt.Sprintf("profile-%d", time.Now().UnixNano())
 	}
 
+	existing := p.app.Config.FindProfile(p.currentID)
+	customParams := make(map[string]string)
+	if existing != nil && existing.CustomParams != nil {
+		for k, v := range existing.CustomParams {
+			customParams[k] = v
+		}
+	}
+
+	if totpSec := strings.TrimSpace(p.totpSecretEntry.Text); totpSec != "" {
+		customParams["totp_secret"] = totpSec
+	} else {
+		delete(customParams, "totp_secret")
+	}
+
+	if devID := strings.TrimSpace(p.deviceIDEntry.Text); devID != "" {
+		customParams["device_id"] = devID
+	} else {
+		delete(customParams, "device_id")
+	}
+
 	updated := config.Profile{
 		ID:           p.currentID,
 		Name:         strings.TrimSpace(p.nameEntry.Text),
@@ -269,6 +327,7 @@ func (p *ProfilesTab) saveCurrentProfile() {
 		HeaderKey:    p.hdrKeyEntry.Text,
 		HeaderValue:  p.hdrValEntry.Text,
 		BodyTemplate: p.bodyEntry.Text,
+		CustomParams: customParams,
 	}
 
 	p.app.Config.SaveProfile(updated)
@@ -324,6 +383,14 @@ func (p *ProfilesTab) loadPreset(presetName string) {
 }
 
 func (p *ProfilesTab) testCurrentProfile() {
+	customParams := make(map[string]string)
+	if totpSec := strings.TrimSpace(p.totpSecretEntry.Text); totpSec != "" {
+		customParams["totp_secret"] = totpSec
+	}
+	if devID := strings.TrimSpace(p.deviceIDEntry.Text); devID != "" {
+		customParams["device_id"] = devID
+	}
+
 	testProf := config.Profile{
 		ID:           p.currentID,
 		Name:         p.nameEntry.Text,
@@ -338,16 +405,33 @@ func (p *ProfilesTab) testCurrentProfile() {
 		HeaderKey:    p.hdrKeyEntry.Text,
 		HeaderValue:  p.hdrValEntry.Text,
 		BodyTemplate: p.bodyEntry.Text,
+		CustomParams: customParams,
 	}
 
 	testMag, _ := magnet.Parse("magnet:?xt=urn:btih:0123456789abcdef0123456789abcdef01234567&dn=TorrentClick+Test+Torrent")
 
 	p.testBtn.Disable()
 	go func() {
-		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		ctx, cancel := context.WithTimeout(context.Background(), 12*time.Second)
 		defer cancel()
 
 		res, err := p.app.Client.Execute(ctx, &testProf, testMag)
+
+		// Check if 2FA OTP is required
+		if client.IsOTPRequired(err) {
+			fyne.Do(func() {
+				p.testBtn.Enable()
+				p.app.PromptOTP(
+					"Two-Factor Authentication Required",
+					"Synology DSM requires an OTP code. Enter the 6-digit code from your authenticator app:",
+					func(code string) {
+						testProf.CustomParams["otp_code"] = code
+						p.runOTPTestRetry(testProf, testMag)
+					},
+				)
+			})
+			return
+		}
 
 		fyne.Do(func() {
 			p.testBtn.Enable()
@@ -365,6 +449,40 @@ func (p *ProfilesTab) testCurrentProfile() {
 					errStr = err.Error()
 				}
 				dialog.ShowError(fmt.Errorf("Test Failed:\n%s", errStr), p.app.Window)
+			}
+		})
+	}()
+}
+
+func (p *ProfilesTab) runOTPTestRetry(testProf config.Profile, testMag *magnet.Magnet) {
+	p.testBtn.Disable()
+	go func() {
+		ctx, cancel := context.WithTimeout(context.Background(), 12*time.Second)
+		defer cancel()
+
+		res, err := p.app.Client.Execute(ctx, &testProf, testMag)
+
+		fyne.Do(func() {
+			p.testBtn.Enable()
+
+			if res != nil && res.Success {
+				// Persist acquired device_id
+				if newDevID := testProf.CustomParams["device_id"]; newDevID != "" {
+					p.deviceIDEntry.SetText(newDevID)
+					p.saveCurrentProfile()
+				}
+
+				msg := fmt.Sprintf("2FA Verified & Connection Succeeded!\nHTTP %d %s\n\nTrusted device token was registered and saved automatically. Future logins will not require 2FA.",
+					res.StatusCode, res.StatusText)
+				dialog.ShowInformation("2FA Verification Successful", msg, p.app.Window)
+			} else {
+				errStr := ""
+				if res != nil {
+					errStr = fmt.Sprintf("Status %d %s\nError: %s", res.StatusCode, res.StatusText, res.ErrorMessage)
+				} else if err != nil {
+					errStr = err.Error()
+				}
+				dialog.ShowError(fmt.Errorf("2FA Verification Failed:\n%s", errStr), p.app.Window)
 			}
 		})
 	}()

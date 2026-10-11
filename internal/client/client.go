@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -16,6 +17,16 @@ import (
 	"torrentclick/internal/config"
 	"torrentclick/internal/magnet"
 )
+
+// ErrOTPRequired is returned when an endpoint (such as Synology DSM) requires a two-factor verification code.
+type ErrOTPRequired struct {
+	ProfileID string
+	Message   string
+}
+
+func (e *ErrOTPRequired) Error() string {
+	return e.Message
+}
 
 // Result records the outcome of sending a torrent request.
 type Result struct {
@@ -81,6 +92,12 @@ func (c *Client) Execute(ctx context.Context, p *config.Profile, m *magnet.Magne
 
 	// 1. Handle specialized pre-auth / session initialization
 	sessionID := c.GetSession(p.ID)
+	if sessionID == "" && p.Token != "" && p.AuthType == config.AuthSynologyLogin {
+		// User supplied a manual session ID in the Token field
+		sessionID = p.Token
+		c.SetSession(p.ID, sessionID)
+	}
+
 	if sessionID == "" {
 		var err error
 		sessionID, err = c.authenticateIfNeeded(ctx, p)
@@ -104,6 +121,12 @@ func (c *Client) Execute(ctx context.Context, p *config.Profile, m *magnet.Magne
 		if authErr == nil {
 			c.SetSession(p.ID, sessionID)
 			res, _, err = c.doRequest(ctx, p, m, sessionID)
+		} else {
+			return &Result{
+				Success:      false,
+				ErrorMessage: fmt.Sprintf("Authentication renewal failed: %v", authErr),
+				Duration:     time.Since(start),
+			}, authErr
 		}
 	}
 
@@ -229,9 +252,9 @@ func (c *Client) doRequest(ctx context.Context, p *config.Profile, m *magnet.Mag
 		}
 	}
 
-	// Check if Synology returned session error (e.g. error code 105)
+	// Check if Synology returned session error (e.g. error code 105 or 106)
 	if p.AuthType == config.AuthSynologyLogin {
-		if strings.Contains(respBodyStr, `"error":105`) || strings.Contains(respBodyStr, `"error":106`) {
+		if strings.Contains(respBodyStr, `"error":105`) || strings.Contains(respBodyStr, `"error":106`) || strings.Contains(respBodyStr, `"error":119`) {
 			return &Result{
 				Success:       false,
 				StatusCode:    resp.StatusCode,
@@ -293,10 +316,44 @@ func (c *Client) authenticateIfNeeded(ctx context.Context, p *config.Profile) (s
 }
 
 func (c *Client) loginSynology(ctx context.Context, p *config.Profile) (string, error) {
-	loginURL := fmt.Sprintf("%s/webapi/auth.cgi?api=SYNO.API.Auth&version=3&method=login&account=%s&passwd=%s&session=DownloadStation&format=sid",
+	if p.CustomParams == nil {
+		p.CustomParams = make(map[string]string)
+	}
+
+	// Determine OTP code: auto-generate via TOTP secret if provided, or use entered OTP
+	otpCode := strings.TrimSpace(p.CustomParams["otp_code"])
+	if totpSecret := strings.TrimSpace(p.CustomParams["totp_secret"]); totpSecret != "" {
+		generated, err := GenerateTOTP(totpSecret, time.Now())
+		if err == nil {
+			otpCode = generated
+		}
+	}
+
+	// Build Synology auth query
+	params := url.Values{
+		"api":                 {"SYNO.API.Auth"},
+		"version":             {"6"},
+		"method":              {"login"},
+		"account":             {p.Username},
+		"passwd":              {p.Password},
+		"session":             {"DownloadStation"},
+		"format":              {"sid"},
+		"enable_device_token": {"yes"},
+		"device_name":         {"TorrentClick"},
+	}
+
+	// Use trusted device ID if previously saved
+	if deviceID := strings.TrimSpace(p.CustomParams["device_id"]); deviceID != "" {
+		params.Set("device_id", deviceID)
+	}
+
+	if otpCode != "" {
+		params.Set("otp_code", otpCode)
+	}
+
+	loginURL := fmt.Sprintf("%s/webapi/auth.cgi?%s",
 		strings.TrimRight(p.BaseURL, "/"),
-		url.QueryEscape(p.Username),
-		url.QueryEscape(p.Password),
+		params.Encode(),
 	)
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, loginURL, nil)
@@ -318,10 +375,18 @@ func (c *Client) loginSynology(ctx context.Context, p *config.Profile) (string, 
 	var parsed struct {
 		Success bool `json:"success"`
 		Data    struct {
-			Sid string `json:"sid"`
+			Sid      string `json:"sid"`
+			DeviceID string `json:"device_id"`
+			Did      string `json:"did"`
 		} `json:"data"`
 		Error struct {
-			Code int `json:"code"`
+			Code   int `json:"code"`
+			Errors struct {
+				Token string `json:"token"`
+				Types []struct {
+					Type string `json:"type"`
+				} `json:"types"`
+			} `json:"errors"`
 		} `json:"error"`
 	}
 
@@ -329,8 +394,31 @@ func (c *Client) loginSynology(ctx context.Context, p *config.Profile) (string, 
 		return "", fmt.Errorf("failed to parse Synology login JSON (%s): %w", string(body), err)
 	}
 
-	if !parsed.Success || parsed.Data.Sid == "" {
-		return "", fmt.Errorf("Synology login failed with error code %d (response: %s)", parsed.Error.Code, string(body))
+	if !parsed.Success {
+		switch parsed.Error.Code {
+		case 403:
+			return "", &ErrOTPRequired{
+				ProfileID: p.ID,
+				Message:   "Two-Factor Authentication (2FA) is required on your Synology DSM account. Please provide the 6-digit OTP code.",
+			}
+		case 404:
+			return "", fmt.Errorf("Synology 2FA OTP code is invalid or expired (error 404)")
+		case 400:
+			return "", fmt.Errorf("Synology login failed: incorrect username or password (error 400)")
+		default:
+			return "", fmt.Errorf("Synology login failed with error code %d (response: %s)", parsed.Error.Code, string(body))
+		}
+	}
+
+	// Save trusted device ID if Synology returned one
+	newDeviceID := parsed.Data.DeviceID
+	if newDeviceID == "" {
+		newDeviceID = parsed.Data.Did
+	}
+	if newDeviceID != "" {
+		p.CustomParams["device_id"] = newDeviceID
+		// Clear one-time OTP code since device is now trusted
+		delete(p.CustomParams, "otp_code")
 	}
 
 	return parsed.Data.Sid, nil
@@ -375,6 +463,12 @@ func (c *Client) loginQBittorrent(ctx context.Context, p *config.Profile) (strin
 	}
 
 	return sidCookie, nil
+}
+
+// IsOTPRequired checks if an error indicates two-factor authentication is needed.
+func IsOTPRequired(err error) bool {
+	var otpErr *ErrOTPRequired
+	return errors.As(err, &otpErr)
 }
 
 var templateFuncMap = template.FuncMap{

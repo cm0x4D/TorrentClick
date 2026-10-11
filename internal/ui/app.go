@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/url"
 	"os/exec"
+	"strings"
 	"time"
 
 	"fyne.io/fyne/v2"
@@ -12,6 +13,7 @@ import (
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/dialog"
 	"fyne.io/fyne/v2/theme"
+	"fyne.io/fyne/v2/widget"
 
 	"torrentclick/internal/client"
 	"torrentclick/internal/config"
@@ -87,6 +89,32 @@ func (m *MainApp) SendMagnet(mag *magnet.Magnet, profile *config.Profile, onComp
 
 		res, err := m.Client.Execute(ctx, profile, mag)
 
+		// Check for 2FA OTP requirement
+		if client.IsOTPRequired(err) {
+			fyne.Do(func() {
+				m.PromptOTP(
+					"Two-Factor Authentication (2FA)",
+					"Your Synology DSM account requires an OTP code. Enter the 6-digit verification code from your authenticator app:",
+					func(code string) {
+						if profile.CustomParams == nil {
+							profile.CustomParams = make(map[string]string)
+						}
+						profile.CustomParams["otp_code"] = code
+						m.SendMagnet(mag, profile, func(retryRes *client.Result, retryErr error) {
+							if retryRes != nil && retryRes.Success {
+								_ = m.Config.Save()
+								m.ProfilesTab.loadProfileIntoForm(*profile)
+							}
+							if onComplete != nil {
+								onComplete(retryRes, retryErr)
+							}
+						})
+					},
+				)
+			})
+			return
+		}
+
 		// Record history
 		entry := history.Entry{
 			ID:                fmt.Sprintf("%d", time.Now().UnixNano()),
@@ -136,6 +164,24 @@ func (m *MainApp) SendMagnet(mag *magnet.Magnet, profile *config.Profile, onComp
 			}
 		})
 	}()
+}
+
+// PromptOTP displays a dialog requesting the 6-digit 2FA OTP code.
+func (m *MainApp) PromptOTP(title, message string, onSubmitted func(code string)) {
+	entry := widget.NewEntry()
+	entry.SetPlaceHolder("6-digit code (e.g. 123456)")
+
+	formItem := widget.NewFormItem("OTP Code", entry)
+	d := dialog.NewForm(title, "Verify", "Cancel", []*widget.FormItem{formItem}, func(confirmed bool) {
+		if confirmed {
+			code := strings.TrimSpace(entry.Text)
+			if code != "" && onSubmitted != nil {
+				onSubmitted(code)
+			}
+		}
+	}, m.Window)
+	d.Resize(fyne.NewSize(380, 180))
+	d.Show()
 }
 
 // ShowInfoDialog displays a standard information modal.

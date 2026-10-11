@@ -60,33 +60,44 @@ func TestExecuteGenericWebhook(t *testing.T) {
 	}
 }
 
-func TestExecuteSynologyLoginFlow(t *testing.T) {
-	loginCalled := false
-	taskCalled := false
+func TestExecuteSynology2FAWorkflow(t *testing.T) {
+	trustedDevice := ""
 
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if strings.Contains(r.URL.Path, "auth.cgi") {
-			loginCalled = true
-			if r.URL.Query().Get("account") == "testuser" && r.URL.Query().Get("passwd") == "testpass" {
+			otp := r.URL.Query().Get("otp_code")
+			devID := r.URL.Query().Get("device_id")
+
+			if devID == "trusted_device_abc123" {
+				// Trusted device bypasses OTP!
 				w.WriteHeader(http.StatusOK)
-				_, _ = w.Write([]byte(`{"data":{"sid":"syno_sess_999"},"success":true}`))
-			} else {
-				w.WriteHeader(http.StatusOK)
-				_, _ = w.Write([]byte(`{"error":{"code":400},"success":false}`))
+				_, _ = w.Write([]byte(`{"data":{"sid":"syno_sess_trusted"},"success":true}`))
+				return
 			}
+
+			if otp == "" {
+				// No OTP provided -> 403 error
+				w.WriteHeader(http.StatusOK)
+				_, _ = w.Write([]byte(`{"error":{"code":403,"errors":{"types":[{"type":"otp"}]}},"success":false}`))
+				return
+			}
+
+			if otp == "123456" {
+				trustedDevice = "trusted_device_abc123"
+				w.WriteHeader(http.StatusOK)
+				_, _ = w.Write([]byte(`{"data":{"sid":"syno_sess_otp_ok","device_id":"trusted_device_abc123"},"success":true}`))
+				return
+			}
+
+			// Wrong OTP -> 404 error
+			w.WriteHeader(http.StatusOK)
+			_, _ = w.Write([]byte(`{"error":{"code":404},"success":false}`))
 			return
 		}
 
 		if strings.Contains(r.URL.Path, "task.cgi") {
-			taskCalled = true
-			cookieHdr := r.Header.Get("Cookie")
-			if strings.Contains(cookieHdr, "syno_sess_999") {
-				w.WriteHeader(http.StatusOK)
-				_, _ = w.Write([]byte(`{"success":true}`))
-			} else {
-				w.WriteHeader(http.StatusOK)
-				_, _ = w.Write([]byte(`{"error":{"code":105},"success":false}`))
-			}
+			w.WriteHeader(http.StatusOK)
+			_, _ = w.Write([]byte(`{"success":true}`))
 			return
 		}
 
@@ -100,42 +111,54 @@ func TestExecuteSynologyLoginFlow(t *testing.T) {
 	}
 
 	p := &config.Profile{
-		ID:           "test-syno",
+		ID:           "test-syno-2fa",
 		Type:         "synology",
 		BaseURL:      server.URL,
 		Endpoint:     "/webapi/DownloadStation/task.cgi",
 		Method:       "POST",
 		ContentType:  "application/x-www-form-urlencoded",
 		AuthType:     config.AuthSynologyLogin,
-		Username:     "testuser",
-		Password:     "testpass",
+		Username:     "user",
+		Password:     "pass",
+		CustomParams: make(map[string]string),
 		BodyTemplate: `api=SYNO.DownloadStation.Task&version=1&method=create&uri={{.MagnetEscaped}}&_sid={{.SessionID}}`,
 	}
 
 	c := NewClient()
-	res, err := c.Execute(context.Background(), p, mag)
-	if err != nil {
-		t.Fatalf("unexpected error: %v", err)
+
+	// 1. Initial attempt without OTP -> should return ErrOTPRequired
+	_, err = c.Execute(context.Background(), p, mag)
+	if err == nil || !IsOTPRequired(err) {
+		t.Fatalf("expected ErrOTPRequired, got: %v", err)
 	}
 
-	if !loginCalled {
-		t.Errorf("Synology login was not called")
-	}
-	if !taskCalled {
-		t.Errorf("Synology task endpoint was not called")
+	// 2. Retry with OTP "123456"
+	p.CustomParams["otp_code"] = "123456"
+	res, err := c.Execute(context.Background(), p, mag)
+	if err != nil {
+		t.Fatalf("unexpected error after providing OTP: %v", err)
 	}
 	if !res.Success {
 		t.Errorf("expected success, got: %s", res.ErrorMessage)
 	}
 
-	// Subsequent execution should reuse cached session ID without calling login again
-	loginCalled = false
-	_, err = c.Execute(context.Background(), p, mag)
-	if err != nil {
-		t.Fatalf("second call failed: %v", err)
+	// Verify device_id was saved to CustomParams
+	if p.CustomParams["device_id"] != "trusted_device_abc123" {
+		t.Errorf("expected device_id to be stored, got: %s", p.CustomParams["device_id"])
 	}
-	if loginCalled {
-		t.Errorf("Synology login called again despite cached session")
+
+	// 3. Subsequent execution with cleared session cache -> should login using device_id without OTP!
+	c.ClearSession(p.ID)
+	delete(p.CustomParams, "otp_code")
+	res, err = c.Execute(context.Background(), p, mag)
+	if err != nil {
+		t.Fatalf("unexpected error with device_id: %v", err)
+	}
+	if !res.Success {
+		t.Errorf("expected success with device_id, got: %s", res.ErrorMessage)
+	}
+	if trustedDevice != "trusted_device_abc123" {
+		t.Errorf("device was not marked trusted")
 	}
 }
 
