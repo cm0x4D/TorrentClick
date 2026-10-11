@@ -1,0 +1,83 @@
+version: '3'
+
+vars:
+  APP_NAME: 'TorrentClick'
+  APP_ID: 'com.torrentclick.app'
+  BINARY_DIR: 'bin'
+  BINARY_NAME: 'torrentclick'
+  FYNE_BIN: '{{.HOME}}/go/bin/fyne'
+  LSREGISTER: '/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister'
+
+tasks:
+  default:
+    desc: 'List available tasks'
+    cmds:
+      - '{{.TASK}} --list'
+
+  icon:
+    desc: 'Generate high-resolution application icon (assets/icon.png)'
+    sources:
+      - 'scripts/gen_icon.go'
+    generates:
+      - 'assets/icon.png'
+    cmds:
+      - go run scripts/gen_icon.go
+
+  build:
+    desc: 'Compile Go binary into bin/torrentclick'
+    sources:
+      - '**/*.go'
+      - go.mod
+      - go.sum
+    generates:
+      - '{{.BINARY_DIR}}/{{.BINARY_NAME}}'
+    cmds:
+      - mkdir -p {{.BINARY_DIR}}
+      - go build -v -o {{.BINARY_DIR}}/{{.BINARY_NAME}} ./cmd/torrentclick
+
+  test:
+    desc: 'Run all unit tests'
+    cmds:
+      - go test -v ./...
+
+  package:
+    desc: 'Build and package macOS TorrentClick.app bundle with magnet: URL scheme registration'
+    deps:
+      - icon
+      - build
+    cmds:
+      - rm -rf {{.APP_NAME}}.app
+      - '{{.FYNE_BIN}} package -os darwin -name {{.APP_NAME}} -app-id {{.APP_ID}} -icon $(pwd)/assets/icon.png -executable {{.BINARY_DIR}}/{{.BINARY_NAME}}'
+      - '/usr/libexec/PlistBuddy -c "Add :CFBundleURLTypes array" {{.APP_NAME}}.app/Contents/Info.plist || true'
+      - '/usr/libexec/PlistBuddy -c "Add :CFBundleURLTypes:0 dict" {{.APP_NAME}}.app/Contents/Info.plist || true'
+      - '/usr/libexec/PlistBuddy -c "Add :CFBundleURLTypes:0:CFBundleURLName string {{.APP_ID}}.magnet" {{.APP_NAME}}.app/Contents/Info.plist || true'
+      - '/usr/libexec/PlistBuddy -c "Add :CFBundleURLTypes:0:CFBundleURLSchemes array" {{.APP_NAME}}.app/Contents/Info.plist || true'
+      - '/usr/libexec/PlistBuddy -c "Add :CFBundleURLTypes:0:CFBundleURLSchemes:0 string magnet" {{.APP_NAME}}.app/Contents/Info.plist || true'
+      - '{{.LSREGISTER}} -f {{.APP_NAME}}.app'
+      - 'echo "Successfully created and registered {{.APP_NAME}}.app for magnet: links!"'
+
+  register:
+    desc: 'Force re-register TorrentClick.app with macOS LaunchServices'
+    cmds:
+      - '{{.LSREGISTER}} -f {{.APP_NAME}}.app'
+      - 'echo "Registered {{.APP_NAME}}.app with LaunchServices"'
+
+  run:
+    desc: 'Run the application directly with go run'
+    cmds:
+      - go run ./cmd/torrentclick
+
+  open:
+    desc: 'Launch the packaged macOS app bundle'
+    cmds:
+      - open {{.APP_NAME}}.app
+
+  test-magnet:
+    desc: 'Send a test magnet: URL through macOS LaunchServices to verify handler'
+    cmds:
+      - 'open "magnet:?xt=urn:btih:c12fe1c06bba254a9dc9f519b335380dc1f74c26&dn=Ubuntu+24.04+LTS+Desktop&tr=http%3A%2F%2Ftorrent.ubuntu.com%3A6969%2Fannounce"'
+
+  clean:
+    desc: 'Remove built binaries and application bundle'
+    cmds:
+      - rm -rf {{.BINARY_DIR}} {{.APP_NAME}}.app

@@ -1,0 +1,14 @@
+# Binaries and bundles
+bin/
+TorrentClick.app/
+*.o
+*.a
+*.so
+*.dylib
+
+# Fyne metadata build artifacts
+*.tar.xz
+
+# IDEs and macOS
+.DS_Store
+.idea/
