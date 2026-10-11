@@ -2,6 +2,9 @@
 
 A modern macOS desktop application written in **Go** and **Fyne** that registers as the system URL handler for torrent `magnet:` links. When a magnet link is clicked anywhere on macOS (Safari, Chrome, Firefox, Slack, etc.) or pasted manually, TorrentClick intercepts it and dispatches a configurable REST API call using **Go text/template** and authentication to your remote or local torrent client.
 
+> [!WARNING]
+> **Disclaimer**: This entire project was vibe coded without even having a detailed look at the code and has only been tested to work with Synology DSM.
+
 ---
 
 ## Features
