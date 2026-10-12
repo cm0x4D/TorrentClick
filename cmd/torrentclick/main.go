@@ -30,13 +30,13 @@ func main() {
 	// 3. Construct and display UI
 	appUI := ui.NewMainApp(cfg, hist)
 
-	// 4. Background listener for incoming magnet URLs (warm or cold boot)
+	// 4. Background listener for incoming targets (magnet URLs or .torrent files, warm or cold boot)
 	go func() {
 		for u := range urlChan {
-			magnetURL := u
-			log.Printf("Received magnet URL: %s", magnetURL)
+			target := u
+			log.Printf("Received magnet link or torrent file: %s", target)
 			fyne.Do(func() {
-				appUI.HandleIncomingMagnet(magnetURL)
+				appUI.HandleIncomingTarget(target)
 			})
 		}
 	}()
@@ -52,16 +52,17 @@ func main() {
 		}
 	}()
 
-	// 6. Check if started with magnet link; if so, run silently in background tray
-	startedWithMagnet := false
+	// 6. Check if started with magnet link or .torrent file; if so, run silently in background tray
+	startedWithTarget := false
 	for _, arg := range os.Args[1:] {
-		if strings.HasPrefix(strings.ToLower(strings.TrimSpace(arg)), "magnet:") {
-			startedWithMagnet = true
+		trimmed := strings.ToLower(strings.TrimSpace(arg))
+		if strings.HasPrefix(trimmed, "magnet:") || strings.HasSuffix(trimmed, ".torrent") {
+			startedWithTarget = true
 			break
 		}
 	}
 
-	if startedWithMagnet {
+	if startedWithTarget {
 		appUI.Window.Hide()
 		appUI.FyneApp.Run()
 	} else {

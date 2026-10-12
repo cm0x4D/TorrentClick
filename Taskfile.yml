@@ -42,20 +42,23 @@ tasks:
       - go test -v ./...
 
   package:
-    desc: 'Build and package macOS TorrentClick.app bundle with magnet: URL scheme registration'
+    desc: 'Build and package macOS TorrentClick.app bundle with magnet: URL and .torrent file registrations'
     deps:
       - icon
       - build
     cmds:
       - rm -rf {{.APP_NAME}}.app
       - '{{.FYNE_BIN}} package -os darwin -name {{.APP_NAME}} -app-id {{.APP_ID}} -icon $(pwd)/assets/icon.png -executable {{.BINARY_DIR}}/{{.BINARY_NAME}}'
-      - '/usr/libexec/PlistBuddy -c "Add :CFBundleURLTypes array" {{.APP_NAME}}.app/Contents/Info.plist || true'
-      - '/usr/libexec/PlistBuddy -c "Add :CFBundleURLTypes:0 dict" {{.APP_NAME}}.app/Contents/Info.plist || true'
-      - '/usr/libexec/PlistBuddy -c "Add :CFBundleURLTypes:0:CFBundleURLName string {{.APP_ID}}.magnet" {{.APP_NAME}}.app/Contents/Info.plist || true'
-      - '/usr/libexec/PlistBuddy -c "Add :CFBundleURLTypes:0:CFBundleURLSchemes array" {{.APP_NAME}}.app/Contents/Info.plist || true'
-      - '/usr/libexec/PlistBuddy -c "Add :CFBundleURLTypes:0:CFBundleURLSchemes:0 string magnet" {{.APP_NAME}}.app/Contents/Info.plist || true'
+      - |
+        PLIST="{{.APP_NAME}}.app/Contents/Info.plist"
+        # 1. Register magnet: URL scheme
+        plutil -replace CFBundleURLTypes -xml '<array><dict><key>CFBundleURLName</key><string>{{.APP_ID}}.magnet</string><key>CFBundleURLSchemes</key><array><string>magnet</string></array></dict></array>' "$PLIST"
+        # 2. Register .torrent file association (CFBundleDocumentTypes)
+        plutil -replace CFBundleDocumentTypes -xml '<array><dict><key>CFBundleTypeName</key><string>BitTorrent Document</string><key>CFBundleTypeRole</key><string>Viewer</string><key>LSHandlerRank</key><string>Owner</string><key>LSItemContentTypes</key><array><string>org.bittorrent.torrent</string></array><key>CFBundleTypeExtensions</key><array><string>torrent</string></array></dict></array>' "$PLIST"
+        # 3. Declare uniform type identifier for .torrent files
+        plutil -replace UTImportedTypeDeclarations -xml '<array><dict><key>UTTypeIdentifier</key><string>org.bittorrent.torrent</string><key>UTTypeDescription</key><string>BitTorrent Document</string><key>UTTypeConformsTo</key><array><string>public.data</string><string>public.item</string></array><key>UTTypeTagSpecification</key><dict><key>public.filename-extension</key><array><string>torrent</string></array><key>public.mime-type</key><string>application/x-bittorrent</string></dict></dict></array>' "$PLIST"
       - '{{.LSREGISTER}} -f {{.APP_NAME}}.app'
-      - 'echo "Successfully created and registered {{.APP_NAME}}.app for magnet: links!"'
+      - 'echo "Successfully created and registered {{.APP_NAME}}.app for magnet: links and .torrent files!"'
 
   register:
     desc: 'Force re-register TorrentClick.app with macOS LaunchServices'
@@ -77,6 +80,15 @@ tasks:
     desc: 'Send a test magnet: URL through macOS LaunchServices to verify handler'
     cmds:
       - 'open "magnet:?xt=urn:btih:c12fe1c06bba254a9dc9f519b335380dc1f74c26&dn=Ubuntu+24.04+LTS+Desktop&tr=http%3A%2F%2Ftorrent.ubuntu.com%3A6969%2Fannounce"'
+
+  test-torrent:
+    desc: 'Create a test .torrent file and open it with macOS LaunchServices'
+    cmds:
+      - |
+        mkdir -p /tmp/torrentclick_test
+        printf 'd8:announce27:http://tracker.example.com/4:infod6:lengthi1048576e4:name14:LaunchTest.iso12:piece lengthi16384e6:pieces20:12345678901234567890ee' > /tmp/torrentclick_test/sample.torrent
+        open -a {{.APP_NAME}}.app /tmp/torrentclick_test/sample.torrent
+        echo "Opened test .torrent file via macOS LaunchServices!"
 
   clean:
     desc: 'Remove built binaries and application bundle'

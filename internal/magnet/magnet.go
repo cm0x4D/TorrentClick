@@ -3,10 +3,11 @@ package magnet
 import (
 	"fmt"
 	"net/url"
+	"os"
 	"strings"
 )
 
-// Magnet represents parsed information from a magnet URI.
+// Magnet represents parsed information from a magnet URI or .torrent file.
 type Magnet struct {
 	Raw           string            `json:"raw"`
 	RawEscaped    string            `json:"raw_escaped"`
@@ -17,19 +18,49 @@ type Magnet struct {
 	ExactSources  []string          `json:"exact_sources"`
 	Keywords      []string          `json:"keywords"`
 	Size          string            `json:"size"`
+	TorrentPath   string            `json:"torrent_path,omitempty"`
 	CustomParams  map[string]string `json:"custom_params"`
 }
 
-// Parse extracts structured information from a magnet URL string.
-func Parse(rawURI string) (*Magnet, error) {
-	trimmed := strings.TrimSpace(rawURI)
+// Parse extracts structured information from either a magnet: URI or a .torrent file path.
+func Parse(rawInput string) (*Magnet, error) {
+	trimmed := strings.TrimSpace(rawInput)
 	if trimmed == "" {
-		return nil, fmt.Errorf("empty magnet URI")
+		return nil, fmt.Errorf("empty magnet or torrent input")
 	}
 
-	if !strings.HasPrefix(strings.ToLower(trimmed), "magnet:") {
-		return nil, fmt.Errorf("invalid magnet scheme: expected magnet: prefix")
+	// 1. Magnet link scheme
+	if strings.HasPrefix(strings.ToLower(trimmed), "magnet:") {
+		return parseMagnetURI(trimmed)
 	}
+
+	// 2. File path or file:// URL (.torrent)
+	cleanPath := trimmed
+	if strings.HasPrefix(cleanPath, "file://") {
+		u, err := url.Parse(cleanPath)
+		if err == nil {
+			cleanPath = u.Path
+		} else {
+			cleanPath = strings.TrimPrefix(cleanPath, "file://")
+		}
+	}
+
+	if strings.HasSuffix(strings.ToLower(cleanPath), ".torrent") {
+		return ParseTorrentFile(cleanPath)
+	}
+
+	// If file exists on filesystem, attempt parsing as torrent
+	if fi, err := os.Stat(cleanPath); err == nil && !fi.IsDir() {
+		m, err := ParseTorrentFile(cleanPath)
+		if err == nil {
+			return m, nil
+		}
+	}
+
+	return nil, fmt.Errorf("invalid input: expected magnet: URI or .torrent file path")
+}
+
+func parseMagnetURI(trimmed string) (*Magnet, error) {
 
 	u, err := url.Parse(trimmed)
 	if err != nil {
@@ -110,6 +141,8 @@ func (m *Magnet) ToTemplateContext(cfgParams map[string]string, sessionID string
 		"Size":          m.Size,
 		"SessionID":     sessionID,
 		"Config":        cfgParams,
+		"TorrentPath":   m.TorrentPath,
+		"TorrentBase64": m.CustomParams["torrent_file_base64"],
 	}
 	return ctx
 }

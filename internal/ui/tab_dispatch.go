@@ -2,12 +2,14 @@ package ui
 
 import (
 	"fmt"
+	"path/filepath"
 	"strings"
 	"time"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/dialog"
+	"fyne.io/fyne/v2/storage"
 	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
 
@@ -15,13 +17,14 @@ import (
 	"torrentclick/internal/magnet"
 )
 
-// DispatchTab manages the primary magnet inspection and dispatch UI.
+// DispatchTab manages the primary magnet / torrent inspection and dispatch UI.
 type DispatchTab struct {
 	app            *MainApp
 	magnetEntry    *widget.Entry
 	nameLabel      *widget.Label
 	hashLabel      *widget.Label
 	trackersLabel  *widget.Label
+	sourceLabel    *widget.Label
 	profileSelect  *widget.Select
 	sendBtn        *widget.Button
 	statusLabel    *widget.Label
@@ -42,7 +45,7 @@ func NewDispatchTab(app *MainApp) *DispatchTab {
 // Build creates the Fyne container for the Dispatch tab.
 func (d *DispatchTab) Build() fyne.CanvasObject {
 	d.magnetEntry = widget.NewMultiLineEntry()
-	d.magnetEntry.SetPlaceHolder("Paste or click magnet:?xt=urn:btih:... link here")
+	d.magnetEntry.SetPlaceHolder("Paste magnet link, file path, or open a .torrent file here")
 	d.magnetEntry.Wrapping = fyne.TextWrapBreak
 	d.magnetEntry.OnChanged = func(val string) {
 		d.parseAndUpdate(val)
@@ -58,6 +61,21 @@ func (d *DispatchTab) Build() fyne.CanvasObject {
 		}
 	})
 
+	openFileBtn := widget.NewButtonWithIcon("Open .torrent...", theme.FolderOpenIcon(), func() {
+		fileDialog := dialog.NewFileOpen(func(reader fyne.URIReadCloser, err error) {
+			if err != nil || reader == nil {
+				return
+			}
+			defer reader.Close()
+			path := reader.URI().Path()
+			if path != "" {
+				d.SetTarget(path)
+			}
+		}, d.app.Window)
+		fileDialog.SetFilter(storage.NewExtensionFileFilter([]string{".torrent"}))
+		fileDialog.Show()
+	})
+
 	clearBtn := widget.NewButtonWithIcon("Clear", theme.ContentClearIcon(), func() {
 		d.magnetEntry.SetText("")
 		d.clearDetails()
@@ -68,17 +86,19 @@ func (d *DispatchTab) Build() fyne.CanvasObject {
 		d.magnetEntry.SetText(sample)
 	})
 
-	topBtns := container.NewHBox(pasteBtn, clearBtn, sampleBtn)
+	topBtns := container.NewHBox(openFileBtn, pasteBtn, clearBtn, sampleBtn)
 
 	// Torrent Details Card
 	d.nameLabel = widget.NewLabelWithStyle("No torrent loaded", fyne.TextAlignLeading, fyne.TextStyle{Bold: true})
 	d.hashLabel = widget.NewLabel("Hash: -")
 	d.trackersLabel = widget.NewLabel("Trackers: -")
+	d.sourceLabel = widget.NewLabel("Source: -")
 
 	detailsCard := widget.NewCard("Torrent Information", "", container.NewVBox(
 		container.NewHBox(widget.NewLabelWithStyle("Name:", fyne.TextAlignLeading, fyne.TextStyle{Bold: true}), d.nameLabel),
 		d.hashLabel,
 		d.trackersLabel,
+		d.sourceLabel,
 	))
 
 	// Profile selection
@@ -114,7 +134,7 @@ func (d *DispatchTab) Build() fyne.CanvasObject {
 	))
 
 	content := container.NewVBox(
-		widget.NewLabelWithStyle("Magnet Link Dispatcher", fyne.TextAlignLeading, fyne.TextStyle{Bold: true}),
+		widget.NewLabelWithStyle("Magnet & Torrent Dispatcher", fyne.TextAlignLeading, fyne.TextStyle{Bold: true}),
 		container.NewBorder(nil, topBtns, nil, nil, container.NewVScroll(d.magnetEntry)),
 		detailsCard,
 		controlsCard,
@@ -132,9 +152,10 @@ func (d *DispatchTab) parseAndUpdate(raw string) {
 
 	mag, err := magnet.Parse(trimmed)
 	if err != nil {
-		d.nameLabel.SetText("Invalid Magnet Link")
+		d.nameLabel.SetText("Invalid Magnet / Torrent")
 		d.hashLabel.SetText(fmt.Sprintf("Error: %v", err))
 		d.trackersLabel.SetText("")
+		d.sourceLabel.SetText("")
 		d.parsedMagnet = nil
 		return
 	}
@@ -147,6 +168,12 @@ func (d *DispatchTab) parseAndUpdate(raw string) {
 	} else {
 		d.trackersLabel.SetText("Trackers: None specified")
 	}
+
+	if mag.TorrentPath != "" {
+		d.sourceLabel.SetText(fmt.Sprintf("Source: File (%s)", filepath.Base(mag.TorrentPath)))
+	} else {
+		d.sourceLabel.SetText("Source: Magnet Link")
+	}
 }
 
 func (d *DispatchTab) clearDetails() {
@@ -154,6 +181,7 @@ func (d *DispatchTab) clearDetails() {
 	d.nameLabel.SetText("No torrent loaded")
 	d.hashLabel.SetText("Hash: -")
 	d.trackersLabel.SetText("Trackers: -")
+	d.sourceLabel.SetText("Source: -")
 	d.statusLabel.SetText("Ready")
 	d.detailsBtn.Hide()
 }
@@ -180,23 +208,28 @@ func (d *DispatchTab) RefreshProfiles() {
 	}
 }
 
-// SetMagnet populates the magnet input box.
-func (d *DispatchTab) SetMagnet(raw string) {
+// SetTarget populates the target input box with a magnet link or torrent file path.
+func (d *DispatchTab) SetTarget(raw string) {
 	d.magnetEntry.SetText(raw)
 }
 
-// TriggerSend sends the current parsed magnet to the active profile.
+// SetMagnet populates the magnet input box (kept for compatibility).
+func (d *DispatchTab) SetMagnet(raw string) {
+	d.SetTarget(raw)
+}
+
+// TriggerSend sends the current parsed magnet or torrent to the active profile.
 func (d *DispatchTab) TriggerSend() {
 	if d.parsedMagnet == nil {
 		raw := strings.TrimSpace(d.magnetEntry.Text)
 		if raw == "" {
-			d.statusLabel.SetText("Please enter or paste a magnet link first")
+			d.statusLabel.SetText("Please enter a magnet link or .torrent file path first")
 			return
 		}
 		var err error
 		d.parsedMagnet, err = magnet.Parse(raw)
 		if err != nil {
-			d.statusLabel.SetText(fmt.Sprintf("Invalid magnet: %v", err))
+			d.statusLabel.SetText(fmt.Sprintf("Invalid input: %v", err))
 			return
 		}
 	}

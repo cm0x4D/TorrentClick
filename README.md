@@ -1,7 +1,7 @@
 # TorrentClick
 
-A macOS desktop application written in **Go** and **Fyne** that registers as the system URL handler for torrent `magnet:` links. When a magnet link is clicked anywhere on 
-macOS (Safari, Chrome, Firefox, Slack, etc.) or pasted manually, TorrentClick intercepts it and dispatches a configurable REST API call using **Go text/template** and 
+A macOS desktop application written in **Go** and **Fyne** that registers as the system handler for torrent `magnet:` links and double-clicked `.torrent` files. When a magnet link is clicked anywhere on 
+macOS (Safari, Chrome, Firefox, Slack, etc.) or a `.torrent` file is double-clicked in Finder, TorrentClick intercepts it and dispatches a configurable REST API call using **Go text/template** and 
 authentication to your remote or local torrent client.
 
 > [!WARNING]
@@ -15,10 +15,11 @@ appreciated should anyone fix a template or a bug in the application itself!
 
 ## Features
 
-- **macOS Magnet URL Scheme Handler**:
-  - Registers `CFBundleURLTypes` for `magnet:` links in macOS `Info.plist`.
-  - Handles **cold boots** (app opened via `os.Args` when clicking a magnet link).
-  - Handles **warm starts** (app already running, receives macOS Cocoa Apple Events `kInternetEventClass` / `kAEGetURL` via a lightweight Cgo bridge).
+- **macOS Magnet URL Scheme & .torrent File Association**:
+  - Registers `CFBundleURLTypes` for `magnet:` links and `CFBundleDocumentTypes` / `UTImportedTypeDeclarations` for `.torrent` files in macOS `Info.plist`.
+  - Handles **cold boots** (app launched when double-clicking a `.torrent` file or clicking a magnet link).
+  - Handles **warm starts** (app already running, receives Cocoa Apple Events `kInternetEventClass` / `kAEGetURL` and `kCoreEventClass` / `kAEOpenDocuments`, as well as `NSApplicationDelegate` `openFiles:`/`openURLs:` hooks).
+  - Built-in bencode parser extracts torrent info-hash (SHA-1), display name, file sizes, and tracker lists to synthesize magnet URIs and expose file payloads.
 - **macOS System Tray / Menu Bar Icon**:
   - Resides in the macOS menu bar status item tray with a custom template icon.
   - Tray menu provides options to Show Window, inspect Active Client, switch target clients directly, open Preferences, and Quit.
@@ -70,9 +71,11 @@ TorrentClick/
 │   │   └── config_test.go    # Config management unit tests
 │   ├── history/              # Persistent dispatch history
 │   │   └── history.go
-│   ├── magnet/               # Magnet URI parser & template context builder
+│   ├── magnet/               # Magnet URI & .torrent bencode parser
 │   │   ├── magnet.go
-│   │   └── magnet_test.go
+│   │   ├── magnet_test.go
+│   │   ├── torrent.go        # Bencode decoder, SHA-1 info-hash calculation & payload builder
+│   │   └── torrent_test.go
 │   ├── ui/                   # Fyne UI views
 │   │   ├── app.go            # UI root window, tabs, notification dispatcher
 │   │   ├── tab_dispatch.go   # Magnet link inspection and send view

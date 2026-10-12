@@ -92,13 +92,18 @@ func (m *MainApp) ApplyTheme() {
 	}
 }
 
-// HandleIncomingMagnet processes a magnet link received from macOS or CLI.
+// HandleIncomingTarget processes a magnet link or .torrent file received from macOS or CLI.
 // When the app is already running, the window is NOT shown or focused;
-// the link is dispatched silently in the background with a desktop notification.
-func (m *MainApp) HandleIncomingMagnet(magnetURI string) {
-	m.DispatchTab.SetMagnet(magnetURI)
+// the link or file is dispatched silently in the background with a desktop notification.
+func (m *MainApp) HandleIncomingTarget(target string) {
+	m.DispatchTab.SetTarget(target)
 	// Silently trigger background dispatch without showing or focusing window
 	m.DispatchTab.TriggerSend()
+}
+
+// HandleIncomingMagnet is a convenience wrapper for HandleIncomingTarget.
+func (m *MainApp) HandleIncomingMagnet(magnetURI string) {
+	m.HandleIncomingTarget(magnetURI)
 }
 
 // SendMagnet dispatches the magnet link to the chosen profile.
