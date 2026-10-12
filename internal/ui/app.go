@@ -3,7 +3,9 @@ package ui
 import (
 	"context"
 	"fmt"
+	"log"
 	"net/url"
+	"os"
 	"os/exec"
 	"strings"
 	"time"
@@ -98,7 +100,7 @@ func (m *MainApp) ApplyTheme() {
 func (m *MainApp) HandleIncomingTarget(target string) {
 	m.DispatchTab.SetTarget(target)
 	// Silently trigger background dispatch without showing or focusing window
-	m.DispatchTab.TriggerSend()
+	m.DispatchTab.TriggerSendTarget(target)
 }
 
 // HandleIncomingMagnet is a convenience wrapper for HandleIncomingTarget.
@@ -164,12 +166,29 @@ func (m *MainApp) SendMagnet(mag *magnet.Magnet, profile *config.Profile, onComp
 		fyne.Do(func() {
 			m.HistoryTab.Refresh()
 
+			// Optionally delete .torrent file after successful dispatch
+			deletedFile := false
+			if entry.Success && m.Config.DeleteTorrentAfterDispatch && mag.TorrentPath != "" {
+				if _, statErr := os.Stat(mag.TorrentPath); statErr == nil {
+					if removeErr := os.Remove(mag.TorrentPath); removeErr != nil {
+						log.Printf("Warning: failed to delete torrent file %s: %v", mag.TorrentPath, removeErr)
+					} else {
+						deletedFile = true
+						log.Printf("Deleted torrent file after successful dispatch: %s", mag.TorrentPath)
+					}
+				}
+			}
+
 			// Desktop Notification
 			if m.Config.NotificationsEnabled {
 				if entry.Success {
+					msg := fmt.Sprintf("%s -> %s (%d OK)", mag.DisplayName, profile.Name, entry.StatusCode)
+					if deletedFile {
+						msg += " (file deleted)"
+					}
 					m.FyneApp.SendNotification(fyne.NewNotification(
 						"Torrent Sent Successfully",
-						fmt.Sprintf("%s -> %s (%d OK)", mag.DisplayName, profile.Name, entry.StatusCode),
+						msg,
 					))
 				} else {
 					m.FyneApp.SendNotification(fyne.NewNotification(

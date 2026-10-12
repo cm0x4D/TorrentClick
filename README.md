@@ -47,7 +47,7 @@ appreciated should anyone fix a template or a bug in the application itself!
   - **Dispatch Tab**: Live parsing of magnet links (name, info hash, trackers count), destination profile picker, one-click send, response status and inspection modal.
   - **Profiles Tab**: Visual profile editor and preset loader, test connection button.
   - **History Tab**: Timestamped log of past dispatches with status codes and one-click resend.
-  - **Settings Tab**: Auto-send on click toggle, desktop notifications, auto-hide window after dispatch, and LaunchServices registration tool.
+  - **Settings Tab**: Auto-send on click toggle, desktop notifications, auto-hide window after dispatch, optional auto-deletion of `.torrent` files after successful download task creation, and LaunchServices registration tool.
 - **Automated Task Runner**:
   - Managed via `go-task` (`Taskfile.yml`) for compilation, tests, icon generation, packaging, and testing.
 

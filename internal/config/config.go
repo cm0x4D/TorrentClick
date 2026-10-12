@@ -45,13 +45,14 @@ type Profile struct {
 
 // Config holds all app configuration settings.
 type Config struct {
-	ActiveProfileID      string    `json:"active_profile_id"`
-	AutoSend             bool      `json:"auto_send"`
-	NotificationsEnabled bool      `json:"notifications_enabled"`
-	HideWindowAfterSend  bool      `json:"hide_window_after_send"`
-	ThemeMode            string    `json:"theme_mode"` // "auto", "dark", "light"
-	Profiles             []Profile `json:"profiles"`
-	mu                   sync.RWMutex
+	ActiveProfileID           string    `json:"active_profile_id"`
+	AutoSend                  bool      `json:"auto_send"`
+	NotificationsEnabled      bool      `json:"notifications_enabled"`
+	HideWindowAfterSend       bool      `json:"hide_window_after_send"`
+	DeleteTorrentAfterDispatch bool      `json:"delete_torrent_after_dispatch"`
+	ThemeMode                 string    `json:"theme_mode"` // "auto", "dark", "light"
+	Profiles                  []Profile `json:"profiles"`
+	mu                        sync.RWMutex
 }
 
 // DefaultProfiles provides ready-to-use profiles for popular clients.
@@ -145,12 +146,13 @@ func DefaultProfiles() []Profile {
 func NewDefault() *Config {
 	profiles := DefaultProfiles()
 	return &Config{
-		ActiveProfileID:      profiles[0].ID,
-		AutoSend:             false,
-		NotificationsEnabled: true,
-		HideWindowAfterSend:  false,
-		ThemeMode:            "auto",
-		Profiles:             profiles,
+		ActiveProfileID:           profiles[0].ID,
+		AutoSend:                  false,
+		NotificationsEnabled:      true,
+		HideWindowAfterSend:       false,
+		DeleteTorrentAfterDispatch: false,
+		ThemeMode:                 "auto",
+		Profiles:                  profiles,
 	}
 }
 

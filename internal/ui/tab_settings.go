@@ -15,11 +15,12 @@ import (
 
 // SettingsTab manages application preferences and macOS LaunchServices registration.
 type SettingsTab struct {
-	app          *MainApp
-	autoSend     *widget.Check
-	notify       *widget.Check
-	hideAfter    *widget.Check
-	statusBanner *widget.Label
+	app           *MainApp
+	autoSend      *widget.Check
+	notify        *widget.Check
+	hideAfter     *widget.Check
+	deleteTorrent *widget.Check
+	statusBanner  *widget.Label
 }
 
 // NewSettingsTab creates a new SettingsTab.
@@ -43,6 +44,11 @@ func (s *SettingsTab) Build() fyne.CanvasObject {
 		s.app.Config.HideWindowAfterSend = val
 	})
 	s.hideAfter.SetChecked(s.app.Config.HideWindowAfterSend)
+
+	s.deleteTorrent = widget.NewCheck("Delete .torrent files after download task is added", func(val bool) {
+		s.app.Config.DeleteTorrentAfterDispatch = val
+	})
+	s.deleteTorrent.SetChecked(s.app.Config.DeleteTorrentAfterDispatch)
 
 	themeSelect := widget.NewSelect([]string{
 		"Match macOS System (Auto)",
@@ -86,6 +92,7 @@ func (s *SettingsTab) Build() fyne.CanvasObject {
 		s.autoSend,
 		s.notify,
 		s.hideAfter,
+		s.deleteTorrent,
 		container.NewHBox(saveBtn),
 	))
 

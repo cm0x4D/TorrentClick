@@ -50,6 +50,7 @@ func TestConfigSaveLoad(t *testing.T) {
 
 	cfg := NewDefault()
 	cfg.ActiveProfileID = "qbittorrent"
+	cfg.DeleteTorrentAfterDispatch = true
 	if err := cfg.Save(); err != nil {
 		t.Fatalf("failed to save config: %v", err)
 	}
@@ -61,6 +62,10 @@ func TestConfigSaveLoad(t *testing.T) {
 
 	if loaded.ActiveProfileID != "qbittorrent" {
 		t.Errorf("expected active profile qbittorrent, got %s", loaded.ActiveProfileID)
+	}
+
+	if !loaded.DeleteTorrentAfterDispatch {
+		t.Errorf("expected DeleteTorrentAfterDispatch to be true, got false")
 	}
 
 	p := loaded.GetActiveProfile()

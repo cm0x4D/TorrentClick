@@ -210,6 +210,7 @@ func (d *DispatchTab) RefreshProfiles() {
 
 // SetTarget populates the target input box with a magnet link or torrent file path.
 func (d *DispatchTab) SetTarget(raw string) {
+	d.parsedMagnet = nil
 	d.magnetEntry.SetText(raw)
 }
 
@@ -218,21 +219,20 @@ func (d *DispatchTab) SetMagnet(raw string) {
 	d.SetTarget(raw)
 }
 
-// TriggerSend sends the current parsed magnet or torrent to the active profile.
-func (d *DispatchTab) TriggerSend() {
-	if d.parsedMagnet == nil {
-		raw := strings.TrimSpace(d.magnetEntry.Text)
-		if raw == "" {
-			d.statusLabel.SetText("Please enter a magnet link or .torrent file path first")
-			return
-		}
-		var err error
-		d.parsedMagnet, err = magnet.Parse(raw)
-		if err != nil {
-			d.statusLabel.SetText(fmt.Sprintf("Invalid input: %v", err))
-			return
-		}
+// TriggerSendTarget dispatches the specified target (magnet link or torrent file) to the active profile.
+func (d *DispatchTab) TriggerSendTarget(target string) {
+	trimmed := strings.TrimSpace(target)
+	if trimmed == "" {
+		d.statusLabel.SetText("Please enter a magnet link or .torrent file path first")
+		return
 	}
+
+	mag, err := magnet.Parse(trimmed)
+	if err != nil {
+		d.statusLabel.SetText(fmt.Sprintf("Invalid input: %v", err))
+		return
+	}
+	d.parsedMagnet = mag
 
 	activeProfile := d.app.Config.GetActiveProfile()
 	if activeProfile == nil {
@@ -249,7 +249,11 @@ func (d *DispatchTab) TriggerSend() {
 		d.sendBtn.Enable()
 
 		if res != nil && res.Success {
-			d.statusLabel.SetText(fmt.Sprintf("Success! HTTP %d OK in %v", res.StatusCode, res.Duration.Round(10*time.Millisecond)))
+			statusMsg := fmt.Sprintf("Success! HTTP %d OK in %v", res.StatusCode, res.Duration.Round(10*time.Millisecond))
+			if d.app.Config.DeleteTorrentAfterDispatch && d.parsedMagnet != nil && d.parsedMagnet.TorrentPath != "" {
+				statusMsg += " (.torrent deleted)"
+			}
+			d.statusLabel.SetText(statusMsg)
 			d.detailsBtn.Show()
 		} else {
 			errMsg := "Dispatch failed"
@@ -264,6 +268,11 @@ func (d *DispatchTab) TriggerSend() {
 			}
 		}
 	})
+}
+
+// TriggerSend sends the current parsed magnet or torrent in the entry box to the active profile.
+func (d *DispatchTab) TriggerSend() {
+	d.TriggerSendTarget(d.magnetEntry.Text)
 }
 
 func (d *DispatchTab) showResponseDetails() {
