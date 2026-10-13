@@ -50,8 +50,9 @@ type Config struct {
 	NotificationsEnabled      bool      `json:"notifications_enabled"`
 	HideWindowAfterSend       bool      `json:"hide_window_after_send"`
 	DeleteTorrentAfterDispatch bool      `json:"delete_torrent_after_dispatch"`
-	ThemeMode                 string    `json:"theme_mode"` // "auto", "dark", "light"
-	Profiles                  []Profile `json:"profiles"`
+	ThemeMode                  string    `json:"theme_mode"` // "auto", "dark", "light"
+	IconDisplayMode            string    `json:"icon_display_mode"` // "both", "tray", "dock"
+	Profiles                   []Profile `json:"profiles"`
 	mu                        sync.RWMutex
 }
 
@@ -146,13 +147,14 @@ func DefaultProfiles() []Profile {
 func NewDefault() *Config {
 	profiles := DefaultProfiles()
 	return &Config{
-		ActiveProfileID:           profiles[0].ID,
-		AutoSend:                  false,
-		NotificationsEnabled:      true,
-		HideWindowAfterSend:       false,
+		ActiveProfileID:            profiles[0].ID,
+		AutoSend:                   false,
+		NotificationsEnabled:       true,
+		HideWindowAfterSend:        false,
 		DeleteTorrentAfterDispatch: false,
-		ThemeMode:                 "auto",
-		Profiles:                  profiles,
+		ThemeMode:                  "auto",
+		IconDisplayMode:            "both",
+		Profiles:                   profiles,
 	}
 }
 
@@ -271,6 +273,10 @@ func Load() (*Config, error) {
 	if len(cfg.Profiles) == 0 {
 		cfg.Profiles = DefaultProfiles()
 		cfg.ActiveProfileID = cfg.Profiles[0].ID
+	}
+
+	if cfg.IconDisplayMode == "" {
+		cfg.IconDisplayMode = "both"
 	}
 
 	return &cfg, nil

@@ -22,6 +22,8 @@ import (
 	"torrentclick/internal/history"
 	"torrentclick/internal/magnet"
 	"torrentclick/internal/sysdark"
+	"torrentclick/internal/sysicon"
+	"torrentclick/internal/urlhandler"
 )
 
 // MainApp wraps the Fyne GUI application state.
@@ -74,8 +76,25 @@ func NewMainApp(cfg *config.Config, hist *history.Manager) *MainApp {
 
 	mApp.ApplyTheme()
 	mApp.SetupSystemTray()
+	mApp.ApplyIconMode()
+
+	urlhandler.SetReopenCallback(func() {
+		fyne.Do(func() {
+			mApp.Window.Show()
+			mApp.Window.RequestFocus()
+		})
+	})
 
 	return mApp
+}
+
+// ApplyIconMode configures whether the Dock icon, Menu Bar tray icon, or both are displayed.
+func (m *MainApp) ApplyIconMode() {
+	mode := sysicon.IconMode(m.Config.IconDisplayMode)
+	if mode == "" {
+		mode = sysicon.ModeBoth
+	}
+	sysicon.ApplyMode(mode)
 }
 
 // ApplyTheme synchronizes Fyne theme with macOS appearance and preferences.

@@ -24,6 +24,10 @@ appreciated should anyone fix a template or a bug in the application itself!
   - Fetches `.torrent` file directly into **browser RAM** (preserving authenticated tracker cookies) and forwards it via `torrentclick://` without ever saving to `~/Downloads` or touching the hard disk!
   - Hold **Option (⌥)** while clicking any torrent link to bypass interception and download to disk normally.
   - Includes a standalone **Userscript** (`extension/torrentclick.user.js`) for 1-click use in Tampermonkey or Userscripts for Safari.
+- **Configurable macOS Dock & Menu Bar Tray Display**:
+  - Configure whether TorrentClick displays in the macOS **Dock only**, **Menu Bar Tray only**, or **Both** in the Settings tab.
+  - Dynamically changes `NSApplicationActivationPolicy` (Regular vs. Accessory) and `NSStatusItem` visibility at runtime without needing an app restart.
+  - Clicking the Dock icon reopens the TorrentClick window when hidden.
 - **macOS System Tray / Menu Bar Icon**:
   - Resides in the macOS menu bar status item tray with a custom template icon.
   - Tray menu provides options to Show Window, inspect Active Client, switch target clients directly, open Preferences, and Quit.

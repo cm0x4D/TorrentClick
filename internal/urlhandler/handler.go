@@ -13,7 +13,25 @@ var (
 	mu         sync.Mutex
 	lastTarget string
 	lastTime   time.Time
+	reopenCb   func()
 )
+
+// SetReopenCallback registers a listener invoked when the app should reopen (e.g. macOS Dock icon clicked).
+func SetReopenCallback(cb func()) {
+	mu.Lock()
+	defer mu.Unlock()
+	reopenCb = cb
+}
+
+// TriggerReopen invokes the registered reopen callback.
+func TriggerReopen() {
+	mu.Lock()
+	cb := reopenCb
+	mu.Unlock()
+	if cb != nil {
+		cb()
+	}
+}
 
 // Init initializes platform URL event handling and inspects startup arguments.
 func Init(args []string) <-chan string {
@@ -23,7 +41,8 @@ func Init(args []string) <-chan string {
 	for _, arg := range args {
 		trimmed := strings.TrimSpace(arg)
 		lower := strings.ToLower(trimmed)
-		if strings.HasPrefix(lower, "magnet:") || strings.HasSuffix(lower, ".torrent") {
+		if strings.HasPrefix(lower, "magnet:") || strings.HasSuffix(lower, ".torrent") ||
+			strings.HasPrefix(lower, "torrentclick:") || strings.HasPrefix(lower, "torrent:") {
 			dispatchURL(trimmed)
 			break
 		}

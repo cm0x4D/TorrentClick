@@ -2,8 +2,9 @@
 #import <objc/runtime.h>
 #import "darwin_url.h"
 
-// Forward declaration of Go export
+// Forward declaration of Go exports
 extern void handleDarwinURL(char* urlStr);
+extern void handleDarwinReopen(void);
 
 static NSString *extractPathFromDescriptor(NSAppleEventDescriptor *desc) {
     if (!desc) return nil;
@@ -165,7 +166,23 @@ static void hookDelegateClass(Class cls) {
             method_setImplementation(origMethod, openURLsImp);
         }
     }
-    NSLog(@"[TorrentClick] Application delegate hooked for openFile:, openFiles:, and openURLs:");
+
+    // 4. applicationShouldHandleReopen:hasVisibleWindows: (Dock click)
+    SEL reopenSel = @selector(applicationShouldHandleReopen:hasVisibleWindows:);
+    BOOL (^reopenBlock)(id, NSApplication *, BOOL) = ^BOOL(id self, NSApplication *app, BOOL flag) {
+        (void)self; (void)app; (void)flag;
+        NSLog(@"[TorrentClick] delegate applicationShouldHandleReopen: hasVisibleWindows=%d", flag);
+        handleDarwinReopen();
+        return YES;
+    };
+    IMP reopenImp = imp_implementationWithBlock(reopenBlock);
+    if (!class_addMethod(cls, reopenSel, reopenImp, "c@:@c")) {
+        Method origMethod = class_getInstanceMethod(cls, reopenSel);
+        if (origMethod) {
+            method_setImplementation(origMethod, reopenImp);
+        }
+    }
+    NSLog(@"[TorrentClick] Application delegate hooked for openFile:, openFiles:, openURLs:, and reopen");
 }
 
 @interface NSApplication (TorrentHook)

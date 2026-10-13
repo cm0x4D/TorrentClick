@@ -18,6 +18,11 @@ func handleDarwinURL(urlStr *C.char) {
 	dispatchURL(u)
 }
 
+//export handleDarwinReopen
+func handleDarwinReopen() {
+	TriggerReopen()
+}
+
 func registerPlatformURLHandler() {
 	C.setupDarwinURLHandler()
 }

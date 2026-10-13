@@ -76,6 +76,32 @@ func (s *SettingsTab) Build() fyne.CanvasObject {
 		themeSelect.SetSelected("Match macOS System (Auto)")
 	}
 
+	iconModeSelect := widget.NewSelect([]string{
+		"Both (Dock & Menu Bar)",
+		"Menu Bar Tray only (Hide Dock)",
+		"Dock only (Hide Menu Bar)",
+	}, func(val string) {
+		switch val {
+		case "Menu Bar Tray only (Hide Dock)":
+			s.app.Config.IconDisplayMode = "tray"
+		case "Dock only (Hide Menu Bar)":
+			s.app.Config.IconDisplayMode = "dock"
+		default:
+			s.app.Config.IconDisplayMode = "both"
+		}
+		s.app.ApplyIconMode()
+		_ = s.app.Config.Save()
+	})
+
+	switch s.app.Config.IconDisplayMode {
+	case "tray":
+		iconModeSelect.SetSelected("Menu Bar Tray only (Hide Dock)")
+	case "dock":
+		iconModeSelect.SetSelected("Dock only (Hide Menu Bar)")
+	default:
+		iconModeSelect.SetSelected("Both (Dock & Menu Bar)")
+	}
+
 	saveBtn := widget.NewButtonWithIcon("Save Preferences", theme.DocumentSaveIcon(), func() {
 		if err := s.app.Config.Save(); err != nil {
 			dialog.ShowError(err, s.app.Window)
@@ -88,6 +114,8 @@ func (s *SettingsTab) Build() fyne.CanvasObject {
 	prefCard := widget.NewCard("Appearance & Behavior", "", container.NewVBox(
 		widget.NewLabel("Desktop Appearance Theme:"),
 		themeSelect,
+		widget.NewLabel("Icon Display Mode:"),
+		iconModeSelect,
 		widget.NewSeparator(),
 		s.autoSend,
 		s.notify,

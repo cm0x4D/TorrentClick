@@ -51,6 +51,7 @@ func TestConfigSaveLoad(t *testing.T) {
 	cfg := NewDefault()
 	cfg.ActiveProfileID = "qbittorrent"
 	cfg.DeleteTorrentAfterDispatch = true
+	cfg.IconDisplayMode = "tray"
 	if err := cfg.Save(); err != nil {
 		t.Fatalf("failed to save config: %v", err)
 	}
@@ -66,6 +67,10 @@ func TestConfigSaveLoad(t *testing.T) {
 
 	if !loaded.DeleteTorrentAfterDispatch {
 		t.Errorf("expected DeleteTorrentAfterDispatch to be true, got false")
+	}
+
+	if loaded.IconDisplayMode != "tray" {
+		t.Errorf("expected IconDisplayMode 'tray', got %s", loaded.IconDisplayMode)
 	}
 
 	p := loaded.GetActiveProfile()
