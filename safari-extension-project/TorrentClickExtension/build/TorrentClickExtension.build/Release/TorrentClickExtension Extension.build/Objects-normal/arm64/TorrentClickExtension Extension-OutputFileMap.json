@@ -1,0 +1,16 @@
+{
+  "" : {
+    "const-values" : "/Users/michael/Projekte/TorrentClick/safari-extension-project/TorrentClickExtension/build/TorrentClickExtension.build/Release/TorrentClickExtension Extension.build/Objects-normal/arm64/TorrentClickExtension Extension-primary.swiftconstvalues",
+    "dependencies" : "/Users/michael/Projekte/TorrentClick/safari-extension-project/TorrentClickExtension/build/TorrentClickExtension.build/Release/TorrentClickExtension Extension.build/Objects-normal/arm64/TorrentClickExtension Extension-primary.d",
+    "diagnostics" : "/Users/michael/Projekte/TorrentClick/safari-extension-project/TorrentClickExtension/build/TorrentClickExtension.build/Release/TorrentClickExtension Extension.build/Objects-normal/arm64/TorrentClickExtension Extension-primary.dia",
+    "emit-module-dependencies" : "/Users/michael/Projekte/TorrentClick/safari-extension-project/TorrentClickExtension/build/TorrentClickExtension.build/Release/TorrentClickExtension Extension.build/Objects-normal/arm64/TorrentClickExtension Extension-primary-emit-module.d",
+    "emit-module-diagnostics" : "/Users/michael/Projekte/TorrentClick/safari-extension-project/TorrentClickExtension/build/TorrentClickExtension.build/Release/TorrentClickExtension Extension.build/Objects-normal/arm64/TorrentClickExtension Extension-primary-emit-module.dia",
+    "pch" : "/Users/michael/Projekte/TorrentClick/safari-extension-project/TorrentClickExtension/build/TorrentClickExtension.build/Release/TorrentClickExtension Extension.build/Objects-normal/arm64/TorrentClickExtension Extension-primary-Bridging-header.pch",
+    "swift-dependencies" : "/Users/michael/Projekte/TorrentClick/safari-extension-project/TorrentClickExtension/build/TorrentClickExtension.build/Release/TorrentClickExtension Extension.build/Objects-normal/arm64/TorrentClickExtension Extension-primary.swiftdeps"
+  },
+  "/Users/michael/Projekte/TorrentClick/safari-extension-project/TorrentClickExtension/TorrentClickExtension Extension/SafariWebExtensionHandler.swift" : {
+    "index-unit-output-path" : "/TorrentClickExtension.build/Release/TorrentClickExtension Extension.build/Objects-normal/arm64/SafariWebExtensionHandler.o",
+    "llvm-bc" : "/Users/michael/Projekte/TorrentClick/safari-extension-project/TorrentClickExtension/build/TorrentClickExtension.build/Release/TorrentClickExtension Extension.build/Objects-normal/arm64/SafariWebExtensionHandler.bc",
+    "object" : "/Users/michael/Projekte/TorrentClick/safari-extension-project/TorrentClickExtension/build/TorrentClickExtension.build/Release/TorrentClickExtension Extension.build/Objects-normal/arm64/SafariWebExtensionHandler.o"
+  }
+}

@@ -1,0 +1,601 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 110;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		4CEB6CFA307EBA4B00F46FFE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEB6CF9307EBA4B00F46FFE /* AppDelegate.swift */; };
+		4CEB6CFE307EBA4B00F46FFE /* Main.html in Resources */ = {isa = PBXBuildFile; fileRef = 4CEB6CFC307EBA4B00F46FFE /* Main.html */; };
+		4CEB6D00307EBA4B00F46FFE /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 4CEB6CFF307EBA4B00F46FFE /* Icon.png */; };
+		4CEB6D02307EBA4B00F46FFE /* Style.css in Resources */ = {isa = PBXBuildFile; fileRef = 4CEB6D01307EBA4B00F46FFE /* Style.css */; };
+		4CEB6D04307EBA4B00F46FFE /* Script.js in Resources */ = {isa = PBXBuildFile; fileRef = 4CEB6D03307EBA4B00F46FFE /* Script.js */; };
+		4CEB6D06307EBA4B00F46FFE /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEB6D05307EBA4B00F46FFE /* ViewController.swift */; };
+		4CEB6D09307EBA4B00F46FFE /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4CEB6D07307EBA4B00F46FFE /* Main.storyboard */; };
+		4CEB6D0B307EBA4C00F46FFE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4CEB6D0A307EBA4C00F46FFE /* Assets.xcassets */; };
+		4CEB6D12307EBA4C00F46FFE /* TorrentClickExtension Extension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 4CEB6D11307EBA4C00F46FFE /* TorrentClickExtension Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		4CEB6D17307EBA4C00F46FFE /* SafariWebExtensionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CEB6D16307EBA4C00F46FFE /* SafariWebExtensionHandler.swift */; };
+		4CEB6D2A307EBA4C00F46FFE /* popup.js in Resources */ = {isa = PBXBuildFile; fileRef = 4CEB6D23307EBA4C00F46FFE /* popup.js */; };
+		4CEB6D2B307EBA4C00F46FFE /* background.js in Resources */ = {isa = PBXBuildFile; fileRef = 4CEB6D24307EBA4C00F46FFE /* background.js */; };
+		4CEB6D2C307EBA4C00F46FFE /* popup.html in Resources */ = {isa = PBXBuildFile; fileRef = 4CEB6D25307EBA4C00F46FFE /* popup.html */; };
+		4CEB6D2D307EBA4C00F46FFE /* icons in Resources */ = {isa = PBXBuildFile; fileRef = 4CEB6D26307EBA4C00F46FFE /* icons */; };
+		4CEB6D2E307EBA4C00F46FFE /* manifest.json in Resources */ = {isa = PBXBuildFile; fileRef = 4CEB6D27307EBA4C00F46FFE /* manifest.json */; };
+		4CEB6D2F307EBA4C00F46FFE /* torrentclick.user.js in Resources */ = {isa = PBXBuildFile; fileRef = 4CEB6D28307EBA4C00F46FFE /* torrentclick.user.js */; };
+		4CEB6D30307EBA4C00F46FFE /* content.js in Resources */ = {isa = PBXBuildFile; fileRef = 4CEB6D29307EBA4C00F46FFE /* content.js */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		4CEB6D13307EBA4C00F46FFE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4CEB6CEE307EBA4B00F46FFE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4CEB6D10307EBA4C00F46FFE;
+			remoteInfo = "TorrentClickExtension Extension";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		4CEB6D1E307EBA4C00F46FFE /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			dstPath = "";
+			dstSubfolder = PlugIns;
+			files = (
+				4CEB6D12307EBA4C00F46FFE /* TorrentClickExtension Extension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		4CEB6CF6307EBA4B00F46FFE /* TorrentClickExtension.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TorrentClickExtension.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		4CEB6CF9307EBA4B00F46FFE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		4CEB6CFD307EBA4B00F46FFE /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = Base; path = Base.lproj/Main.html; sourceTree = "<group>"; };
+		4CEB6CFF307EBA4B00F46FFE /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
+		4CEB6D01307EBA4B00F46FFE /* Style.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = Style.css; sourceTree = "<group>"; };
+		4CEB6D03307EBA4B00F46FFE /* Script.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = Script.js; sourceTree = "<group>"; };
+		4CEB6D05307EBA4B00F46FFE /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		4CEB6D08307EBA4B00F46FFE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		4CEB6D0A307EBA4C00F46FFE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		4CEB6D0C307EBA4C00F46FFE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4CEB6D11307EBA4C00F46FFE /* TorrentClickExtension Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "TorrentClickExtension Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		4CEB6D16307EBA4C00F46FFE /* SafariWebExtensionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariWebExtensionHandler.swift; sourceTree = "<group>"; };
+		4CEB6D18307EBA4C00F46FFE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4CEB6D23307EBA4C00F46FFE /* popup.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = popup.js; path = Resources/popup.js; sourceTree = "<group>"; };
+		4CEB6D24307EBA4C00F46FFE /* background.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = background.js; path = Resources/background.js; sourceTree = "<group>"; };
+		4CEB6D25307EBA4C00F46FFE /* popup.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = popup.html; path = Resources/popup.html; sourceTree = "<group>"; };
+		4CEB6D26307EBA4C00F46FFE /* icons */ = {isa = PBXFileReference; lastKnownFileType = folder; name = icons; path = Resources/icons; sourceTree = "<group>"; };
+		4CEB6D27307EBA4C00F46FFE /* manifest.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = manifest.json; path = Resources/manifest.json; sourceTree = "<group>"; };
+		4CEB6D28307EBA4C00F46FFE /* torrentclick.user.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = torrentclick.user.js; path = Resources/torrentclick.user.js; sourceTree = "<group>"; };
+		4CEB6D29307EBA4C00F46FFE /* content.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = content.js; path = Resources/content.js; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		4CEB6CF3307EBA4B00F46FFE /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			files = (
+			);
+		};
+		4CEB6D0E307EBA4C00F46FFE /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			files = (
+			);
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		4CEB6CED307EBA4B00F46FFE = {
+			isa = PBXGroup;
+			children = (
+				4CEB6CF8307EBA4B00F46FFE /* TorrentClickExtension */,
+				4CEB6D15307EBA4C00F46FFE /* TorrentClickExtension Extension */,
+				4CEB6CF7307EBA4B00F46FFE /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		4CEB6CF7307EBA4B00F46FFE /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				4CEB6CF6307EBA4B00F46FFE /* TorrentClickExtension.app */,
+				4CEB6D11307EBA4C00F46FFE /* TorrentClickExtension Extension.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		4CEB6CF8307EBA4B00F46FFE /* TorrentClickExtension */ = {
+			isa = PBXGroup;
+			children = (
+				4CEB6CF9307EBA4B00F46FFE /* AppDelegate.swift */,
+				4CEB6D05307EBA4B00F46FFE /* ViewController.swift */,
+				4CEB6D07307EBA4B00F46FFE /* Main.storyboard */,
+				4CEB6D0A307EBA4C00F46FFE /* Assets.xcassets */,
+				4CEB6D0C307EBA4C00F46FFE /* Info.plist */,
+				4CEB6CFB307EBA4B00F46FFE /* Resources */,
+			);
+			path = TorrentClickExtension;
+			sourceTree = "<group>";
+		};
+		4CEB6CFB307EBA4B00F46FFE /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				4CEB6CFC307EBA4B00F46FFE /* Main.html */,
+				4CEB6CFF307EBA4B00F46FFE /* Icon.png */,
+				4CEB6D01307EBA4B00F46FFE /* Style.css */,
+				4CEB6D03307EBA4B00F46FFE /* Script.js */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		4CEB6D15307EBA4C00F46FFE /* TorrentClickExtension Extension */ = {
+			isa = PBXGroup;
+			children = (
+				4CEB6D22307EBA4C00F46FFE /* Resources */,
+				4CEB6D16307EBA4C00F46FFE /* SafariWebExtensionHandler.swift */,
+				4CEB6D18307EBA4C00F46FFE /* Info.plist */,
+			);
+			path = "TorrentClickExtension Extension";
+			sourceTree = "<group>";
+		};
+		4CEB6D22307EBA4C00F46FFE /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				4CEB6D23307EBA4C00F46FFE /* popup.js */,
+				4CEB6D24307EBA4C00F46FFE /* background.js */,
+				4CEB6D25307EBA4C00F46FFE /* popup.html */,
+				4CEB6D26307EBA4C00F46FFE /* icons */,
+				4CEB6D27307EBA4C00F46FFE /* manifest.json */,
+				4CEB6D28307EBA4C00F46FFE /* torrentclick.user.js */,
+				4CEB6D29307EBA4C00F46FFE /* content.js */,
+			);
+			name = Resources;
+			path = "TorrentClickExtension Extension";
+			sourceTree = SOURCE_ROOT;
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		4CEB6CF5307EBA4B00F46FFE /* TorrentClickExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4CEB6D1F307EBA4C00F46FFE /* Build configuration list for PBXNativeTarget "TorrentClickExtension" */;
+			buildPhases = (
+				4CEB6CF2307EBA4B00F46FFE /* Sources */,
+				4CEB6CF3307EBA4B00F46FFE /* Frameworks */,
+				4CEB6CF4307EBA4B00F46FFE /* Resources */,
+				4CEB6D1E307EBA4C00F46FFE /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				4CEB6D14307EBA4C00F46FFE /* PBXTargetDependency */,
+			);
+			name = TorrentClickExtension;
+			productName = TorrentClickExtension;
+			productReference = 4CEB6CF6307EBA4B00F46FFE /* TorrentClickExtension.app */;
+			productType = "com.apple.product-type.application";
+		};
+		4CEB6D10307EBA4C00F46FFE /* TorrentClickExtension Extension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4CEB6D1B307EBA4C00F46FFE /* Build configuration list for PBXNativeTarget "TorrentClickExtension Extension" */;
+			buildPhases = (
+				4CEB6D0D307EBA4C00F46FFE /* Sources */,
+				4CEB6D0E307EBA4C00F46FFE /* Frameworks */,
+				4CEB6D0F307EBA4C00F46FFE /* Resources */,
+			);
+			buildRules = (
+			);
+			name = "TorrentClickExtension Extension";
+			productName = "TorrentClickExtension Extension";
+			productReference = 4CEB6D11307EBA4C00F46FFE /* TorrentClickExtension Extension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		4CEB6CEE307EBA4B00F46FFE /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2700;
+				LastUpgradeCheck = 2700;
+				TargetAttributes = {
+					4CEB6CF5307EBA4B00F46FFE = {
+						CreatedOnToolsVersion = 27.0;
+					};
+					4CEB6D10307EBA4C00F46FFE = {
+						CreatedOnToolsVersion = 27.0;
+					};
+				};
+			};
+			buildConfigurationList = 4CEB6CF1307EBA4B00F46FFE /* Build configuration list for PBXProject "TorrentClickExtension" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 4CEB6CED307EBA4B00F46FFE;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 4CEB6CF7307EBA4B00F46FFE /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				4CEB6CF5307EBA4B00F46FFE /* TorrentClickExtension */,
+				4CEB6D10307EBA4C00F46FFE /* TorrentClickExtension Extension */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		4CEB6CF4307EBA4B00F46FFE /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			files = (
+				4CEB6D00307EBA4B00F46FFE /* Icon.png in Resources */,
+				4CEB6D09307EBA4B00F46FFE /* Main.storyboard in Resources */,
+				4CEB6D04307EBA4B00F46FFE /* Script.js in Resources */,
+				4CEB6CFE307EBA4B00F46FFE /* Main.html in Resources */,
+				4CEB6D0B307EBA4C00F46FFE /* Assets.xcassets in Resources */,
+				4CEB6D02307EBA4B00F46FFE /* Style.css in Resources */,
+			);
+		};
+		4CEB6D0F307EBA4C00F46FFE /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			files = (
+				4CEB6D2F307EBA4C00F46FFE /* torrentclick.user.js in Resources */,
+				4CEB6D2B307EBA4C00F46FFE /* background.js in Resources */,
+				4CEB6D2D307EBA4C00F46FFE /* icons in Resources */,
+				4CEB6D2E307EBA4C00F46FFE /* manifest.json in Resources */,
+				4CEB6D2C307EBA4C00F46FFE /* popup.html in Resources */,
+				4CEB6D30307EBA4C00F46FFE /* content.js in Resources */,
+				4CEB6D2A307EBA4C00F46FFE /* popup.js in Resources */,
+			);
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		4CEB6CF2307EBA4B00F46FFE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			files = (
+				4CEB6D06307EBA4B00F46FFE /* ViewController.swift in Sources */,
+				4CEB6CFA307EBA4B00F46FFE /* AppDelegate.swift in Sources */,
+			);
+		};
+		4CEB6D0D307EBA4C00F46FFE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			files = (
+				4CEB6D17307EBA4C00F46FFE /* SafariWebExtensionHandler.swift in Sources */,
+			);
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		4CEB6D14307EBA4C00F46FFE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4CEB6D10307EBA4C00F46FFE /* TorrentClickExtension Extension */;
+			targetProxy = 4CEB6D13307EBA4C00F46FFE /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		4CEB6CFC307EBA4B00F46FFE /* Main.html */ = {
+			isa = PBXVariantGroup;
+			children = (
+				4CEB6CFD307EBA4B00F46FFE /* Base */,
+			);
+			name = Main.html;
+			sourceTree = "<group>";
+		};
+		4CEB6D07307EBA4B00F46FFE /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				4CEB6D08307EBA4B00F46FFE /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		4CEB6D19307EBA4C00F46FFE /* Debug configuration for PBXProject "TorrentClickExtension" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.7;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		4CEB6D1A307EBA4C00F46FFE /* Release configuration for PBXProject "TorrentClickExtension" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.7;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = Release;
+		};
+		4CEB6D1C307EBA4C00F46FFE /* Debug configuration for PBXNativeTarget "TorrentClickExtension Extension" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "TorrentClickExtension Extension/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "TorrentClickExtension Extension";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.torrentclick.app.extension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		4CEB6D1D307EBA4C00F46FFE /* Release configuration for PBXNativeTarget "TorrentClickExtension Extension" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "TorrentClickExtension Extension/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "TorrentClickExtension Extension";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.torrentclick.app.extension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		4CEB6D20307EBA4C00F46FFE /* Debug configuration for PBXNativeTarget "TorrentClickExtension" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = TorrentClickExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = TorrentClickExtension;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSMainStoryboardFile = Main;
+				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
+				INFOPLIST_KEY_NSViewGestureRecognizerIsExclusive = NO;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+					"-framework",
+					WebKit,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.torrentclick.app;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		4CEB6D21307EBA4C00F46FFE /* Release configuration for PBXNativeTarget "TorrentClickExtension" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = TorrentClickExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = TorrentClickExtension;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSMainStoryboardFile = Main;
+				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
+				INFOPLIST_KEY_NSViewGestureRecognizerIsExclusive = NO;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+					"-framework",
+					WebKit,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.torrentclick.app;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		4CEB6CF1307EBA4B00F46FFE /* Build configuration list for PBXProject "TorrentClickExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4CEB6D19307EBA4C00F46FFE /* Debug configuration for PBXProject "TorrentClickExtension" */,
+				4CEB6D1A307EBA4C00F46FFE /* Release configuration for PBXProject "TorrentClickExtension" */,
+			);
+			defaultConfigurationName = Release;
+		};
+		4CEB6D1B307EBA4C00F46FFE /* Build configuration list for PBXNativeTarget "TorrentClickExtension Extension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4CEB6D1C307EBA4C00F46FFE /* Debug configuration for PBXNativeTarget "TorrentClickExtension Extension" */,
+				4CEB6D1D307EBA4C00F46FFE /* Release configuration for PBXNativeTarget "TorrentClickExtension Extension" */,
+			);
+			defaultConfigurationName = Release;
+		};
+		4CEB6D1F307EBA4C00F46FFE /* Build configuration list for PBXNativeTarget "TorrentClickExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4CEB6D20307EBA4C00F46FFE /* Debug configuration for PBXNativeTarget "TorrentClickExtension" */,
+				4CEB6D21307EBA4C00F46FFE /* Release configuration for PBXNativeTarget "TorrentClickExtension" */,
+			);
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 4CEB6CEE307EBA4B00F46FFE /* Project object */;
+	validationLevel = 1;
+}

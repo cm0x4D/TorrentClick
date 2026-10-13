@@ -12,3 +12,5 @@ TorrentClick.app/
 # IDEs and macOS
 .DS_Store
 .idea/
+/build
+/.task

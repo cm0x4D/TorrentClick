@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>TorrentClick</title>
+  <style>
+    :root {
+      --bg: #1c1c1e;
+      --card-bg: #2c2c2e;
+      --text: #ffffff;
+      --text-muted: #8e8e93;
+      --accent: #0a84ff;
+      --accent-hover: #0071e3;
+      --border: rgba(255, 255, 255, 0.1);
+      --success: #30d158;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+    }
+
+    body {
+      width: 290px;
+      background-color: var(--bg);
+      color: var(--text);
+      padding: 16px;
+      user-select: none;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .logo {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+    }
+
+    .title-group {
+      flex: 1;
+    }
+
+    .title {
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: -0.2px;
+    }
+
+    .subtitle {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .status-badge {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--success);
+      background: rgba(48, 209, 88, 0.15);
+      padding: 3px 8px;
+      border-radius: 12px;
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background-color: var(--success);
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: 10px;
+      padding: 12px;
+      margin-bottom: 12px;
+      border: 1px solid var(--border);
+    }
+
+    .toggle-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .toggle-label {
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .toggle-sublabel {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* Switch */
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 40px;
+      height: 24px;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #3a3a3c;
+      transition: .2s;
+      border-radius: 24px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .2s;
+      border-radius: 50%;
+    }
+
+    input:checked + .slider {
+      background-color: var(--accent);
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(16px);
+    }
+
+    .info-box {
+      font-size: 11px;
+      line-height: 1.45;
+      color: var(--text-muted);
+    }
+
+    .info-box b {
+      color: var(--text);
+    }
+
+    .btn {
+      width: 100%;
+      background: var(--card-bg);
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: background 0.15s;
+    }
+
+    .btn:hover {
+      background: #38383a;
+    }
+
+    .footer {
+      font-size: 10px;
+      color: var(--text-muted);
+      text-align: center;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <img src="icons/icon-32.png" alt="Icon" class="logo">
+    <div class="title-group">
+      <div class="title">TorrentClick</div>
+      <div class="subtitle">Safari Companion</div>
+    </div>
+    <div class="status-badge">
+      <span class="status-dot"></span>
+      Active
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="toggle-row">
+      <div>
+        <div class="toggle-label">Auto Intercept</div>
+        <div class="toggle-sublabel">Catch .torrent links in memory</div>
+      </div>
+      <label class="switch">
+        <input type="checkbox" id="autoInterceptToggle" checked>
+        <span class="slider"></span>
+      </label>
+    </div>
+  </div>
+
+  <div class="card info-box">
+    <b>Zero Disk Writes:</b> Clicked .torrent links are streamed straight into RAM and dispatched to your NAS or torrent client without ever cluttering <code>~/Downloads</code>.
+    <br><br>
+    💡 <i>Tip: Hold <b>Option (⌥)</b> while clicking to bypass and save the file normally.</i>
+  </div>
+
+  <button class="btn" id="testBtn">
+    <span>⚡</span> Test TorrentClick Scheme
+  </button>
+
+  <div class="footer">
+    Scheme: <code>torrentclick://</code> & <code>magnet:</code>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

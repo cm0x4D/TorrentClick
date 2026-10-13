@@ -1,0 +1,23 @@
+---
+triple:          'arm64-apple-darwin'
+binary-path:     '/Users/michael/Projekte/TorrentClick/safari-extension-project/TorrentClickExtension/build/Release/TorrentClickExtension Extension.appex/Contents/MacOS/TorrentClickExtension Extension'
+relocations:
+  - { offset: 0xACB6F, size: 0x8, addend: 0x0, symName: '_$s022TorrentClickExtension_C009SafariWebC7HandlerCMa', symObjAddr: 0xB4, symBinAddr: 0x10000138C, symSize: 0x20 }
+  - { offset: 0xACB8E, size: 0x8, addend: 0x0, symName: '_$ss22__RawDictionaryStorageC4findys10_HashTableV6BucketV6bucket_Sb5foundtxSHRzlFs11AnyHashableV_Tg5', symObjAddr: 0xD4, symBinAddr: 0x1000013AC, symSize: 0x30 }
+  - { offset: 0xACBC6, size: 0x8, addend: 0x0, symName: '_$ss22__RawDictionaryStorageC4findys10_HashTableV6BucketV6bucket_Sb5foundtxSHRzlFSS_Tg5', symObjAddr: 0x104, symBinAddr: 0x1000013DC, symSize: 0x64 }
+  - { offset: 0xACBFE, size: 0x8, addend: 0x0, symName: '_$ss22__RawDictionaryStorageC4find_9hashValues10_HashTableV6BucketV6bucket_Sb5foundtx_SitSHRzlFs11AnyHashableV_Tg5', symObjAddr: 0x168, symBinAddr: 0x100001440, symSize: 0xBC }
+  - { offset: 0xACC4C, size: 0x8, addend: 0x0, symName: '_$ss22__RawDictionaryStorageC4find_9hashValues10_HashTableV6BucketV6bucket_Sb5foundtx_SitSHRzlFSS_Tg5', symObjAddr: 0x224, symBinAddr: 0x1000014FC, symSize: 0xAC }
+  - { offset: 0xACE92, size: 0x8, addend: 0x0, symName: '_$sypWOc', symObjAddr: 0xCAC, symBinAddr: 0x100001F84, symSize: 0x3C }
+  - { offset: 0xACEA6, size: 0x8, addend: 0x0, symName: ___swift_instantiateConcreteTypeFromMangledNameV2, symObjAddr: 0xCE8, symBinAddr: 0x100001FC0, symSize: 0x50 }
+  - { offset: 0xACEBA, size: 0x8, addend: 0x0, symName: '_$s10Foundation4UUIDVSgWOb', symObjAddr: 0xD38, symBinAddr: 0x100002010, symSize: 0x50 }
+  - { offset: 0xACECE, size: 0x8, addend: 0x0, symName: '_$sypSgWOc', symObjAddr: 0xD88, symBinAddr: 0x100002060, symSize: 0x50 }
+  - { offset: 0xACEE2, size: 0x8, addend: 0x0, symName: '_$sS2Ss7CVarArg10FoundationWl', symObjAddr: 0xDD8, symBinAddr: 0x1000020B0, symSize: 0x40 }
+  - { offset: 0xACEF6, size: 0x8, addend: 0x0, symName: '_$ss11AnyHashableVWOh', symObjAddr: 0xE98, symBinAddr: 0x100002170, symSize: 0x34 }
+  - { offset: 0xACF0A, size: 0x8, addend: 0x0, symName: '_$ss11AnyHashableVWOc', symObjAddr: 0xECC, symBinAddr: 0x1000021A4, symSize: 0x3C }
+  - { offset: 0xACF95, size: 0x8, addend: 0x0, symName: '_$s022TorrentClickExtension_C009SafariWebC7HandlerC12beginRequest4withySo18NSExtensionContextC_tFTo', symObjAddr: 0x0, symBinAddr: 0x1000012D8, symSize: 0x48 }
+  - { offset: 0xACFD8, size: 0x8, addend: 0x0, symName: '_$s022TorrentClickExtension_C009SafariWebC7HandlerCACycfcTo', symObjAddr: 0x48, symBinAddr: 0x100001320, symSize: 0x3C }
+  - { offset: 0xAD00D, size: 0x8, addend: 0x0, symName: '_$s022TorrentClickExtension_C009SafariWebC7HandlerCfD', symObjAddr: 0x84, symBinAddr: 0x10000135C, symSize: 0x30 }
+  - { offset: 0xAD244, size: 0x8, addend: 0x0, symName: '_$sSD17dictionaryLiteralSDyxq_Gx_q_td_tcfCSS_ypSgTt0g5Tf4g_n', symObjAddr: 0x2D0, symBinAddr: 0x1000015A8, symSize: 0x104 }
+  - { offset: 0xAD330, size: 0x8, addend: 0x0, symName: '_$sSD17dictionaryLiteralSDyxq_Gx_q_td_tcfCs11AnyHashableV_ypTt0g5Tf4g_n', symObjAddr: 0x3D4, symBinAddr: 0x1000016AC, symSize: 0x104 }
+  - { offset: 0xAD515, size: 0x8, addend: 0x0, symName: '_$s022TorrentClickExtension_C009SafariWebC7HandlerC12beginRequest4withySo18NSExtensionContextC_tFTf4nd_n', symObjAddr: 0x4D8, symBinAddr: 0x1000017B0, symSize: 0x7D4 }
+...

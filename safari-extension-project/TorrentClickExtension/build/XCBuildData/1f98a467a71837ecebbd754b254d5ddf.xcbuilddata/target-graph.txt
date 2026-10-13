@@ -1,0 +1,2 @@
+Target dependency graph (1 target)
+Target 'TorrentClickExtension Extension' in project 'TorrentClickExtension' (no dependencies)

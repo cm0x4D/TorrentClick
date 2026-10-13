@@ -52,11 +52,12 @@ func main() {
 		}
 	}()
 
-	// 6. Check if started with magnet link or .torrent file; if so, run silently in background tray
+	// 6. Check if started with magnet link, custom torrent scheme, or .torrent file; if so, run silently in background tray
 	startedWithTarget := false
 	for _, arg := range os.Args[1:] {
 		trimmed := strings.ToLower(strings.TrimSpace(arg))
-		if strings.HasPrefix(trimmed, "magnet:") || strings.HasSuffix(trimmed, ".torrent") {
+		if strings.HasPrefix(trimmed, "magnet:") || strings.HasSuffix(trimmed, ".torrent") ||
+			strings.HasPrefix(trimmed, "torrentclick:") || strings.HasPrefix(trimmed, "torrent:") {
 			startedWithTarget = true
 			break
 		}
